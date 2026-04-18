@@ -7,8 +7,8 @@ import { buildPageTitle } from '../config/site'
 export default function HomePage() {
   return (
     <SiteLayout
-      title={buildPageTitle('Solvência Municipal')}
-      description="Score de solvência municipal com dados públicos, metodologia documentada e dashboard por estado."
+      title={buildPageTitle('Capacidade de Pagamento dos Municípios')}
+      description="Veja a capacidade de pagamento de municípios aos fornecedores com score fiscal, dados públicos do Tesouro Nacional e dashboards por estado."
       activeNav="sobre"
     >
       <section id="sobre" className="section active">
