@@ -1,12 +1,19 @@
-## Runtime Dependencies
+## SolveLicita Frontend
 
-Para manter a futura divisao entre repositorios simples, o frontend hoje assume
-somente estas dependencias externas:
+Aplicação Next.js do SolveLicita.
 
-- public Supabase credentials (`NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`)
-- o contrato de dados publicado na tabela `municipios`
-- os GeoJSONs publicados em `frontend/public/*_geo.geojson`
-- o asset `frontend/lib/brazilMapData.js` usado no mapa da home
+### Runtime
 
-O contrato detalhado esta documentado em
-[`docs/frontend-runtime-contract.md`](../docs/frontend-runtime-contract.md).
+Depende de:
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- tabela Supabase `public.municipios`
+- arquivos GeoJSON em `public/*_geo.geojson`
+- `lib/brazilMapData.js`
+
+### Desenvolvimento
+
+```bash
+npm install
+npm run dev
