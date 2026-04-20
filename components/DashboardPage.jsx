@@ -40,14 +40,6 @@ const LABEL_RISCO = {
   sem_dados: 'S/D',
 }
 
-const LABEL_RISCO_LONGO = {
-  baixo: 'Risco Baixo',
-  medio: 'Risco Medio',
-  alto: 'Risco Alto',
-  critico: 'Critico',
-  sem_dados: 'Sem Dados',
-}
-
 const COLUNAS = [
   { key: '#', label: '#', field: null },
   { key: 'ente', label: 'Municipio', field: 'ente' },
@@ -271,21 +263,238 @@ function Painel({ children, style }) {
   )
 }
 
-function getMunicipioAlertas(municipio) {
-  const alertas = []
-  if (municipio.alerta_dispensa) alertas.push({ label: 'DISPENSA', cor: '#ef4444' })
-  if (municipio.dado_suspeito) alertas.push({ label: 'SUSPEITO', cor: '#f59e0b' })
-  if (municipio.autonomia_critica) alertas.push({ label: 'AUT. CRITICA', cor: '#f59e0b' })
-  if (Number(municipio.n_anos_cronicos) >= 5) alertas.push({ label: 'RP CRONICO', cor: '#ef4444' })
-  if (municipio.dado_defasado) alertas.push({ label: 'DEFASADO', cor: '#64748b' })
-  return alertas
-}
-
 function getMunicipioAlertasCauc(municipio) {
-  return parsePendenciasCauc(municipio.pendencias_cauc_json).map((pendencia) => ({
+  const pendencias = municipio.pendencias_list || parsePendenciasCauc(municipio.pendencias_cauc_json)
+
+  return pendencias.map((pendencia) => ({
     label: `CAUC ${pendencia.codigo}: ${pendencia.descricao}`,
     cor: corPendenciaCauc(pendencia.gravidade),
+    gravidade: pendencia.gravidade || 'LEVE',
+    descricao: pendencia.descricao || pendencia.label || 'Pendencia federal',
   }))
+}
+
+function clampPercent(value) {
+  if (value == null || Number.isNaN(Number(value))) return null
+  return Math.max(0, Math.min(100, Number(value)))
+}
+
+function statusColor(status) {
+  if (status === 'ok') return 'var(--risk-baixo)'
+  if (status === 'warn') return 'var(--risk-medio)'
+  if (status === 'bad') return 'var(--risk-alto)'
+  return 'var(--text-lo)'
+}
+
+function statusByRange(value, { ok, warn, direction = 'higher' }) {
+  if (value == null || Number.isNaN(Number(value))) return 'na'
+  const number = Number(value)
+
+  if (direction === 'lower') {
+    if (number <= ok) return 'ok'
+    if (number <= warn) return 'warn'
+    return 'bad'
+  }
+
+  if (number >= ok) return 'ok'
+  if (number >= warn) return 'warn'
+  return 'bad'
+}
+
+function healthFromMetric(key, value) {
+  if (value == null || Number.isNaN(Number(value))) return null
+  const number = Number(value)
+
+  if (key === 'eorcam') {
+    const distance = Math.abs(number - 100)
+    if (distance <= 8) return 100
+    if (distance <= 18) return 72
+    if (distance <= 30) return 42
+    return 18
+  }
+
+  if (key === 'lliq') {
+    if (number >= 0.2) return 100
+    if (number >= 0.1) return 70
+    if (number >= 0) return 42
+    return 14
+  }
+
+  if (key === 'siconfi') return clampPercent(number * 100)
+  if (key === 'cauc') return clampPercent((1 - number) * 100)
+  if (key === 'autonomia') return clampPercent((number / 0.15) * 100)
+
+  if (key === 'rproc') {
+    if (number <= 1) return 100
+    if (number <= 3) return 72
+    if (number <= 10) return 38
+    return 12
+  }
+
+  return null
+}
+
+function DetailSectionTitle({ children }) {
+  return (
+    <div
+      style={{
+        color: 'var(--text-lo)',
+        fontFamily: 'var(--sans)',
+        fontSize: '0.68rem',
+        fontWeight: 700,
+        letterSpacing: '0.08em',
+        textTransform: 'uppercase',
+        marginBottom: '8px',
+      }}
+    >
+      {children}
+    </div>
+  )
+}
+
+function MetricGroup({ title, children }) {
+  return (
+    <div
+      style={{
+        background: 'var(--bg-card-alt)',
+        border: '1px solid var(--border)',
+        borderRadius: '8px',
+        padding: '12px 14px',
+        minWidth: 0,
+      }}
+    >
+      <DetailSectionTitle>{title}</DetailSectionTitle>
+      <div style={{ display: 'grid', gap: '6px' }}>{children}</div>
+    </div>
+  )
+}
+
+function MetricRow({ label, value, status = 'na' }) {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        gap: '12px',
+        alignItems: 'baseline',
+        fontFamily: 'var(--sans)',
+        fontSize: '0.78rem',
+        lineHeight: 1.35,
+      }}
+    >
+      <span style={{ color: 'var(--text-mid)' }}>{label}</span>
+      <span
+        style={{
+          color: statusColor(status),
+          fontWeight: 700,
+          textAlign: 'right',
+          fontVariantNumeric: 'tabular-nums lining-nums',
+          maxWidth: '56%',
+          overflowWrap: 'anywhere',
+        }}
+      >
+        {value}
+      </span>
+    </div>
+  )
+}
+
+function ContributionBar({ label, value, max, displayValue, exact }) {
+  const percent = max ? clampPercent((Number(value) / max) * 100) : clampPercent(value)
+  const color = percent == null ? 'var(--risk-nd)' : percent >= 66 ? 'var(--risk-baixo)' : percent >= 33 ? 'var(--risk-medio)' : 'var(--risk-alto)'
+
+  return (
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'minmax(120px, 170px) minmax(120px, 1fr) minmax(44px, auto)',
+        gap: '10px',
+        alignItems: 'center',
+        fontFamily: 'var(--sans)',
+        fontSize: '0.76rem',
+      }}
+    >
+      <div style={{ color: 'var(--text-mid)', minWidth: 0 }}>
+        {label}
+        {exact && max ? <span style={{ color: 'var(--text-lo)', fontSize: '0.68rem' }}> / {max}</span> : null}
+      </div>
+      <div
+        style={{
+          height: '5px',
+          background: 'var(--border)',
+          borderRadius: '999px',
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            width: `${percent || 0}%`,
+            height: '100%',
+            background: color,
+            borderRadius: '999px',
+          }}
+        />
+      </div>
+      <div
+        style={{
+          color: 'var(--text-hi)',
+          textAlign: 'right',
+          fontVariantNumeric: 'tabular-nums lining-nums',
+          fontWeight: 600,
+        }}
+      >
+        {displayValue}
+      </div>
+    </div>
+  )
+}
+
+function PendenciaTag({ pendencia }) {
+  const gravidade = String(pendencia.gravidade || 'LEVE').toUpperCase()
+  const color = corPendenciaCauc(gravidade)
+
+  return (
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '6px',
+        padding: '4px 8px',
+        borderRadius: '6px',
+        background: `${color}14`,
+        border: `1px solid ${color}33`,
+        color,
+        fontFamily: 'var(--sans)',
+        fontSize: '0.72rem',
+        fontWeight: 600,
+        lineHeight: 1.25,
+      }}
+    >
+      <span style={{ width: '6px', height: '6px', borderRadius: '999px', background: color, flexShrink: 0 }} />
+      {pendencia.descricao || pendencia.label || 'Pendencia federal'}
+    </span>
+  )
+}
+
+function QualityFlag({ label, color }) {
+  return (
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        padding: '4px 8px',
+        borderRadius: '6px',
+        border: `1px solid ${color}44`,
+        background: `${color}12`,
+        color,
+        fontFamily: 'var(--sans)',
+        fontSize: '0.7rem',
+        fontWeight: 600,
+      }}
+    >
+      {label}
+    </span>
+  )
 }
 
 function MunicipioSelecionado({ municipio }) {
@@ -307,23 +516,50 @@ function MunicipioSelecionado({ municipio }) {
     )
   }
 
-  const risco = normalizeClassificacao(municipio.classificacao)
-  const alertas = getMunicipioAlertas(municipio)
   const alertasCauc = getMunicipioAlertasCauc(municipio)
-  const blocos = [
-    ['Score', municipio.score != null ? Number(municipio.score).toFixed(1) : '-'],
-    ['Risco', LABEL_RISCO_LONGO[risco]],
-    ['Populacao', municipio.populacao?.toLocaleString('pt-BR') || '-'],
-    ['Exec. Orcamentaria', fmtPct(municipio.eorcam_raw)],
-    ['RP Processados (recente)', fmtPct(municipio.rproc_pct_atual)],
-    ['SICONFI', municipio.qsiconfi != null ? fmtPct(Number(municipio.qsiconfi) * 100, 0) : '-'],
-    ['CAUC', fmtNum(municipio.ccauc, 2)],
-    ['Lliq', fmtNum(municipio.lliq_raw, 3)],
-    ['Autonomia', fmtNum(municipio.autonomia_media, 3)],
-    ['Licitacoes', municipio.n_licitacoes?.toLocaleString('pt-BR') || '-'],
-    ['Valor homologado', fmtBRL(municipio.valor_homologado_total)],
-    ['% Dispensa', municipio.pct_dispensa != null ? fmtPct(Number(municipio.pct_dispensa) * 100) : '-'],
+  const pendenciasPorGravidade = alertasCauc.reduce(
+    (acc, pendencia) => {
+      const gravidade = String(pendencia.gravidade || 'LEVE').toUpperCase()
+      if (gravidade === 'GRAVE') acc.graves.push(pendencia)
+      else if (gravidade === 'MODERADA') acc.moderadas.push(pendencia)
+      else acc.leves.push(pendencia)
+      return acc
+    },
+    { graves: [], moderadas: [], leves: [] },
+  )
+  const totalPendencias = alertasCauc.length
+  const exactContributions = [
+    { key: 'contrib_eorcam', label: 'Exec. Orcamentaria', max: 15 },
+    { key: 'contrib_lliq', label: 'Liquidez Liquida', max: 35 },
+    { key: 'contrib_qsiconfi', label: 'Qualidade SICONFI', max: 15 },
+    { key: 'contrib_ccauc', label: 'Regularidade CAUC', max: 10 },
+    { key: 'contrib_autonomia', label: 'Autonomia Fiscal', max: 10 },
+    { key: 'contrib_rproc', label: 'Proc. em Dia', max: 15 },
   ]
+  const hasExactContributions = exactContributions.some((item) => municipio[item.key] != null)
+  const contributionRows = hasExactContributions
+    ? exactContributions.map((item) => ({
+        ...item,
+        value: municipio[item.key],
+        displayValue: municipio[item.key] != null ? fmtNum(municipio[item.key], 2) : '-',
+        exact: true,
+      }))
+    : [
+        { label: 'Exec. Orcamentaria', value: healthFromMetric('eorcam', municipio.eorcam_raw), displayValue: fmtPct(municipio.eorcam_raw) },
+        { label: 'Liquidez Liquida', value: healthFromMetric('lliq', municipio.lliq_raw), displayValue: fmtNum(municipio.lliq_raw, 4) },
+        { label: 'Qualidade SICONFI', value: healthFromMetric('siconfi', municipio.qsiconfi), displayValue: municipio.qsiconfi != null ? fmtPct(Number(municipio.qsiconfi) * 100, 0) : '-' },
+        { label: 'Regularidade CAUC', value: healthFromMetric('cauc', municipio.ccauc), displayValue: fmtNum(municipio.ccauc, 2) },
+        { label: 'Autonomia Fiscal', value: healthFromMetric('autonomia', municipio.autonomia_media), displayValue: municipio.autonomia_media != null ? fmtPct(Number(municipio.autonomia_media) * 100) : '-' },
+        { label: 'RP Processados', value: healthFromMetric('rproc', municipio.rproc_pct_atual), displayValue: fmtPct(municipio.rproc_pct_atual) },
+      ]
+  const qualityFlags = [
+    { label: 'Dado Suspeito', active: Boolean(municipio.dado_suspeito), color: '#f59e0b' },
+    { label: 'Dado Defasado', active: Boolean(municipio.dado_defasado), color: '#64748b' },
+    { label: 'Autonomia Critica', active: Boolean(municipio.autonomia_critica), color: '#f59e0b' },
+    { label: 'RP Cronico', active: Number(municipio.n_anos_cronicos) >= 5, color: '#ef4444' },
+    { label: 'Alerta Dispensa', active: Boolean(municipio.alerta_dispensa), color: '#ef4444' },
+  ]
+  const activeQualityFlags = qualityFlags.filter((flag) => flag.active)
 
   return (
     <Painel>
@@ -341,7 +577,7 @@ function MunicipioSelecionado({ municipio }) {
           <PainelTitulo>Municipio Selecionado</PainelTitulo>
           <div
             style={{
-              fontSize: '1.4rem',
+              fontSize: '1.35rem',
               color: 'var(--text-hi)',
               fontWeight: 700,
               fontFamily: 'var(--sans)',
@@ -350,85 +586,109 @@ function MunicipioSelecionado({ municipio }) {
           >
             {municipio.ente}
           </div>
+          <div
+            style={{
+              color: 'var(--text-lo)',
+              fontFamily: 'var(--sans)',
+              fontSize: '0.78rem',
+              marginTop: '4px',
+              fontVariantNumeric: 'tabular-nums lining-nums',
+            }}
+          >
+            {municipio.cod_ibge ? `IBGE ${municipio.cod_ibge}` : 'Codigo IBGE indisponivel'} · {municipio.populacao?.toLocaleString('pt-BR') || '-'} hab.
+          </div>
         </div>
-        <BadgeRisco classe={municipio.classificacao} />
+        <div style={{ display: 'grid', justifyItems: 'end', gap: '6px' }}>
+          <BadgeRisco classe={municipio.classificacao} />
+          <div
+            style={{
+              color: corPorScore(municipio.score),
+              fontFamily: 'var(--sans)',
+              fontSize: '1.35rem',
+              fontWeight: 800,
+              lineHeight: 1,
+              fontVariantNumeric: 'tabular-nums lining-nums',
+            }}
+          >
+            {municipio.score != null ? Number(municipio.score).toFixed(1) : '-'}
+          </div>
+        </div>
       </div>
 
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))',
-          gap: '8px',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+          gap: '10px',
         }}
       >
-        {blocos.map(([label, value]) => (
-          <div
-            key={label}
-            style={{
-              padding: '8px 9px',
-              background: 'var(--bg-card-alt)',
-              border: '1px solid var(--border-dim)',
-              borderRadius: '8px',
-            }}
-          >
-            <div
-              style={{
-                fontSize: '0.72rem',
-                color: 'var(--text-lo)',
-                fontFamily: 'var(--sans)',
-                fontWeight: 500,
-                marginBottom: '6px',
-              }}
-            >
-              {label}
-            </div>
-            <div
-              style={{
-                fontSize: '0.96rem',
-                color: 'var(--text-hi)',
-                fontFamily: 'var(--sans)',
-                fontWeight: 600,
-                lineHeight: 1.4,
-                fontVariantNumeric: 'tabular-nums lining-nums',
-              }}
-            >
-              {value}
-            </div>
-          </div>
+        <MetricGroup title="Indicadores Fiscais">
+          <MetricRow label="Exec. Orcamentaria" value={fmtPct(municipio.eorcam_raw)} status={statusByRange(municipio.eorcam_raw, { ok: 90, warn: 75 })} />
+          <MetricRow label="Liquidez Liquida" value={fmtNum(municipio.lliq_raw, 4)} status={statusByRange(municipio.lliq_raw, { ok: 0.2, warn: 0.05 })} />
+          <MetricRow label="Autonomia Fiscal" value={municipio.autonomia_media != null ? fmtPct(Number(municipio.autonomia_media) * 100) : '-'} status={statusByRange(municipio.autonomia_media, { ok: 0.15, warn: 0.05 })} />
+          <MetricRow label="RP Processados" value={fmtPct(municipio.rproc_pct_atual)} status={statusByRange(municipio.rproc_pct_atual, { ok: 1, warn: 3, direction: 'lower' })} />
+          <MetricRow label="Anos Cronicos" value={municipio.n_anos_cronicos != null ? municipio.n_anos_cronicos : '-'} status={statusByRange(municipio.n_anos_cronicos, { ok: 0, warn: 2, direction: 'lower' })} />
+        </MetricGroup>
+
+        <MetricGroup title="Conformidade e Entrega">
+          <MetricRow label="SICONFI" value={municipio.qsiconfi != null ? fmtPct(Number(municipio.qsiconfi) * 100, 0) : '-'} status={statusByRange(municipio.qsiconfi, { ok: 1, warn: 0.5 })} />
+          <MetricRow label="CAUC" value={fmtNum(municipio.ccauc, 2)} status={statusByRange(municipio.ccauc, { ok: 0, warn: 0.25, direction: 'lower' })} />
+          <MetricRow label="Pendencias" value={totalPendencias ? totalPendencias : 'Regular'} status={totalPendencias ? (pendenciasPorGravidade.graves.length ? 'bad' : 'warn') : 'ok'} />
+          <MetricRow label="Dado Defasado" value={municipio.dado_defasado ? 'Sim' : 'Nao'} status={municipio.dado_defasado ? 'bad' : 'ok'} />
+          <MetricRow label="Score Bruto" value={municipio.score_bruto != null ? fmtNum(municipio.score_bruto, 2) : municipio.score != null ? fmtNum(municipio.score, 2) : '-'} />
+        </MetricGroup>
+
+        <MetricGroup title="Licitacoes e Dispensas">
+          <MetricRow label="No. Licitacoes" value={municipio.n_licitacoes?.toLocaleString('pt-BR') || '-'} />
+          <MetricRow label="Valor Homologado" value={fmtBRL(municipio.valor_homologado_total)} />
+          <MetricRow label="Dispensas" value={municipio.n_dispensa?.toLocaleString('pt-BR') || '-'} />
+          <MetricRow label="Valor em Dispensa" value={fmtBRL(municipio.valor_hom_dispensa)} />
+          <MetricRow label="% Dispensa / Total" value={municipio.pct_dispensa != null ? fmtPct(Number(municipio.pct_dispensa) * 100) : '-'} status={statusByRange(municipio.pct_dispensa, { ok: 0.3, warn: 0.5, direction: 'lower' })} />
+        </MetricGroup>
+      </div>
+
+      <div style={{ display: 'grid', gap: '8px', marginTop: '14px' }}>
+        <DetailSectionTitle>{hasExactContributions ? 'Contribuicoes ao Score Final' : 'Leitura dos Indicadores do Score'}</DetailSectionTitle>
+        {contributionRows.map((item) => (
+          <ContributionBar
+            key={item.label}
+            label={item.label}
+            value={item.value}
+            max={item.max}
+            displayValue={item.displayValue}
+            exact={item.exact}
+          />
         ))}
       </div>
 
-      {alertas.length || alertasCauc.length ? (
-        <div style={{ display: 'grid', gap: '8px', marginTop: '10px' }}>
-          {alertas.length ? (
-            <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-              {alertas.map((alerta) => (
-                <AlertaBadge key={alerta.label} label={alerta.label} cor={alerta.cor} />
-              ))}
-            </div>
-          ) : null}
+      <div style={{ display: 'grid', gap: '8px', marginTop: '16px' }}>
+        <DetailSectionTitle>
+          Pendencias - {pendenciasPorGravidade.graves.length} grave(s) · {pendenciasPorGravidade.moderadas.length} moderada(s) ·{' '}
+          {pendenciasPorGravidade.leves.length} leve(s)
+        </DetailSectionTitle>
+        {totalPendencias ? (
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+            {alertasCauc.map((pendencia) => (
+              <PendenciaTag key={pendencia.label} pendencia={pendencia} />
+            ))}
+          </div>
+        ) : (
+          <AlertaBadge label="REGULAR - sem pendencias federais" cor="var(--risk-baixo)" />
+        )}
+      </div>
 
-          {alertasCauc.length ? (
-            <div style={{ display: 'grid', gap: '6px' }}>
-              <div
-                style={{
-                  fontSize: '0.72rem',
-                  color: 'var(--text-lo)',
-                  fontFamily: 'var(--sans)',
-                  fontWeight: 600,
-                }}
-              >
-                Pendencias Federais
-              </div>
-              <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-                {alertasCauc.map((alerta) => (
-                  <AlertaBadge key={alerta.label} label={alerta.label} cor={alerta.cor} />
-                ))}
-              </div>
-            </div>
-          ) : null}
+      <div style={{ display: 'grid', gap: '8px', marginTop: '16px' }}>
+        <DetailSectionTitle>Alertas de Qualidade do Dado</DetailSectionTitle>
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+          {activeQualityFlags.length ? (
+            activeQualityFlags.map((flag) => (
+              <QualityFlag key={flag.label} label={flag.label} color={flag.color} />
+            ))
+          ) : (
+            <QualityFlag label="Sem alertas de qualidade" color="var(--risk-baixo)" />
+          )}
         </div>
-      ) : null}
+      </div>
     </Painel>
   )
 }
@@ -441,6 +701,7 @@ export default function DashboardPage({ uf }) {
   const [erro, setErro] = useState(null)
   const [filtroRisco, setFiltroRisco] = useState(new Set(ORDEM_RISCO))
   const [scoreRange, setScoreRange] = useState([0, 100])
+  const [buscaInput, setBuscaInput] = useState('')
   const [busca, setBusca] = useState('')
   const [munSelecionado, setMunSelecionado] = useState(null)
   const [sortField, setSortField] = useState('classificacao_canonica')
@@ -505,6 +766,14 @@ export default function DashboardPage({ uf }) {
     setMunSelecionado(proximo)
   }, [municipios, munSelecionado])
 
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      setBusca(buscaInput)
+    }, 220)
+
+    return () => window.clearTimeout(timeout)
+  }, [buscaInput])
+
   const handleSort = useCallback((field) => {
     if (!field) return
 
@@ -519,13 +788,16 @@ export default function DashboardPage({ uf }) {
     })
   }, [])
 
+  const buscaNormalizada = useMemo(() => normalizeText(busca.trim()), [busca])
+  const buscaPendente = buscaInput !== busca
+
   const municipiosFiltrados = useMemo(() => {
     const filtrados = municipios.filter((municipio) => {
       const risco = municipio.classificacao_canonica || 'sem_dados'
 
       if (!filtroRisco.has(risco)) return false
       if (municipio.score != null && (municipio.score < scoreRange[0] || municipio.score > scoreRange[1])) return false
-      if (busca.trim() && !municipio.ente?.toLowerCase().includes(busca.trim().toLowerCase())) return false
+      if (buscaNormalizada && !normalizeText(municipio.ente).includes(buscaNormalizada)) return false
 
       return true
     })
@@ -557,7 +829,7 @@ export default function DashboardPage({ uf }) {
 
       return sortAsc ? valueLeft - valueRight : valueRight - valueLeft
     })
-  }, [municipios, filtroRisco, scoreRange, busca, sortField, sortAsc])
+  }, [municipios, filtroRisco, scoreRange, buscaNormalizada, sortField, sortAsc])
 
   const ibgesFiltrados = useMemo(
     () => new Set(municipiosFiltrados.map((municipio) => String(municipio.cod_ibge))),
@@ -689,18 +961,16 @@ export default function DashboardPage({ uf }) {
     )
   }
 
-  const SidebarConteudo = () => (
+  const sidebarConteudo = (
     <>
-      <div
-        style={{
-          marginBottom: '18px',
-          display: 'flex',
-          alignItems: 'flex-start',
-          justifyContent: 'space-between',
-        }}
-      >
-        <div />
-        {isMobile ? (
+      {isMobile ? (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            marginBottom: '10px',
+          }}
+        >
           <button
             onClick={() => setSidebarAberta(false)}
             style={{
@@ -715,10 +985,10 @@ export default function DashboardPage({ uf }) {
           >
             x
           </button>
-        ) : null}
-      </div>
+        </div>
+      ) : null}
 
-      <div style={{ borderTop: '1px solid var(--border-dim)', paddingTop: '12px' }}>
+      <div>
         <div
           style={{
             fontSize: '0.76rem',
@@ -843,8 +1113,8 @@ export default function DashboardPage({ uf }) {
         <input
           type="text"
           placeholder="Ex: Campina Grande"
-          value={busca}
-          onChange={(event) => setBusca(event.target.value)}
+          value={buscaInput}
+          onChange={(event) => setBuscaInput(event.target.value)}
           style={{
             width: '100%',
             background: 'var(--bg-card)',
@@ -896,7 +1166,7 @@ export default function DashboardPage({ uf }) {
             zIndex: 100,
           }}
         >
-          <SidebarConteudo />
+          {sidebarConteudo}
         </aside>
       ) : null}
 
@@ -921,7 +1191,7 @@ export default function DashboardPage({ uf }) {
               overflowY: 'auto',
             }}
           >
-            <SidebarConteudo />
+            {sidebarConteudo}
           </aside>
         ) : null}
 
@@ -1209,7 +1479,11 @@ export default function DashboardPage({ uf }) {
               {!isMobile ? (
                 <span style={{ color: 'var(--text-lo)' }}>
                   clique nas colunas para ordenar
-                  {busca ? <span style={{ color: 'var(--accent)', marginLeft: '8px' }}>filtrado: "{busca}"</span> : null}
+                  {buscaInput ? (
+                    <span style={{ color: 'var(--accent)', marginLeft: '8px' }}>
+                      {buscaPendente ? 'filtrando' : 'filtrado'}: "{buscaInput}"
+                    </span>
+                  ) : null}
                 </span>
               ) : null}
             </div>
