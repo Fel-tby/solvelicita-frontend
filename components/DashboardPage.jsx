@@ -187,6 +187,13 @@ function corPendenciaCauc(gravidade) {
   return '#38bdf8'
 }
 
+function stateNameWithArticle(uf) {
+  const normalizedUf = normalizeUf(uf)
+  const name = getStateName(normalizedUf)
+  const feminine = new Set(['PB', 'BA'])
+  return `${feminine.has(normalizedUf) ? 'da' : 'do'} ${name}`
+}
+
 function KPI({ label, value, destaque }) {
   return (
     <div
@@ -301,39 +308,6 @@ function statusByRange(value, { ok, warn, direction = 'higher' }) {
   return 'bad'
 }
 
-function healthFromMetric(key, value) {
-  if (value == null || Number.isNaN(Number(value))) return null
-  const number = Number(value)
-
-  if (key === 'eorcam') {
-    const distance = Math.abs(number - 100)
-    if (distance <= 8) return 100
-    if (distance <= 18) return 72
-    if (distance <= 30) return 42
-    return 18
-  }
-
-  if (key === 'lliq') {
-    if (number >= 0.2) return 100
-    if (number >= 0.1) return 70
-    if (number >= 0) return 42
-    return 14
-  }
-
-  if (key === 'siconfi') return clampPercent(number * 100)
-  if (key === 'cauc') return clampPercent((1 - number) * 100)
-  if (key === 'autonomia') return clampPercent((number / 0.15) * 100)
-
-  if (key === 'rproc') {
-    if (number <= 1) return 100
-    if (number <= 3) return 72
-    if (number <= 10) return 38
-    return 12
-  }
-
-  return null
-}
-
 function DetailSectionTitle({ children }) {
   return (
     <div
@@ -407,8 +381,8 @@ function ContributionBar({ label, value, max, displayValue, exact }) {
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: 'minmax(120px, 170px) minmax(120px, 1fr) minmax(44px, auto)',
-        gap: '10px',
+        gridTemplateColumns: 'minmax(118px, 150px) minmax(90px, 1fr) minmax(44px, auto)',
+        gap: '12px',
         alignItems: 'center',
         fontFamily: 'var(--sans)',
         fontSize: '0.76rem',
@@ -440,7 +414,7 @@ function ContributionBar({ label, value, max, displayValue, exact }) {
           color: 'var(--text-hi)',
           textAlign: 'right',
           fontVariantNumeric: 'tabular-nums lining-nums',
-          fontWeight: 600,
+          fontWeight: 700,
         }}
       >
         {displayValue}
@@ -497,7 +471,47 @@ function QualityFlag({ label, color }) {
   )
 }
 
-function MunicipioSelecionado({ municipio }) {
+function FilterChip({ label, count, color, active, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '7px',
+        minHeight: '32px',
+        borderRadius: '8px',
+        border: `1px solid ${active ? `${color}55` : 'var(--border)'}`,
+        background: active ? `${color}14` : 'var(--bg-card)',
+        color: active ? 'var(--text-hi)' : 'var(--text-mid)',
+        cursor: 'pointer',
+        padding: '7px 9px',
+        fontFamily: 'var(--sans)',
+        fontSize: '0.76rem',
+        fontWeight: active ? 700 : 600,
+        lineHeight: 1,
+        whiteSpace: 'nowrap',
+      }}
+      title={`Filtrar ${label}`}
+    >
+      <span style={{ width: '7px', height: '7px', borderRadius: '999px', background: color, flexShrink: 0 }} />
+      <span>{label}</span>
+      <span
+        style={{
+          color: active ? 'var(--text-mid)' : 'var(--text-lo)',
+          fontFamily: 'var(--mono)',
+          fontSize: '0.72rem',
+          fontVariantNumeric: 'tabular-nums lining-nums',
+        }}
+      >
+        {count}
+      </span>
+    </button>
+  )
+}
+
+function MunicipioSelecionado({ municipio, onClear }) {
   if (!municipio) {
     return (
       <Painel>
@@ -536,22 +550,13 @@ function MunicipioSelecionado({ municipio }) {
     { key: 'contrib_autonomia', label: 'Autonomia Fiscal', max: 10 },
     { key: 'contrib_rproc', label: 'Proc. em Dia', max: 15 },
   ]
-  const hasExactContributions = exactContributions.some((item) => municipio[item.key] != null)
-  const contributionRows = hasExactContributions
-    ? exactContributions.map((item) => ({
-        ...item,
-        value: municipio[item.key],
-        displayValue: municipio[item.key] != null ? fmtNum(municipio[item.key], 2) : '-',
-        exact: true,
-      }))
-    : [
-        { label: 'Exec. Orcamentaria', value: healthFromMetric('eorcam', municipio.eorcam_raw), displayValue: fmtPct(municipio.eorcam_raw) },
-        { label: 'Liquidez Liquida', value: healthFromMetric('lliq', municipio.lliq_raw), displayValue: fmtNum(municipio.lliq_raw, 4) },
-        { label: 'Qualidade SICONFI', value: healthFromMetric('siconfi', municipio.qsiconfi), displayValue: municipio.qsiconfi != null ? fmtPct(Number(municipio.qsiconfi) * 100, 0) : '-' },
-        { label: 'Regularidade CAUC', value: healthFromMetric('cauc', municipio.ccauc), displayValue: fmtNum(municipio.ccauc, 2) },
-        { label: 'Autonomia Fiscal', value: healthFromMetric('autonomia', municipio.autonomia_media), displayValue: municipio.autonomia_media != null ? fmtPct(Number(municipio.autonomia_media) * 100) : '-' },
-        { label: 'RP Processados', value: healthFromMetric('rproc', municipio.rproc_pct_atual), displayValue: fmtPct(municipio.rproc_pct_atual) },
-      ]
+  const contributionRows = exactContributions.map((item) => ({
+    ...item,
+    value: municipio[item.key],
+    displayValue: municipio[item.key] != null ? fmtNum(municipio[item.key], 2) : '-',
+    exact: true,
+  }))
+  const hasContributions = contributionRows.some((item) => item.value != null)
   const qualityFlags = [
     { label: 'Dado Suspeito', active: Boolean(municipio.dado_suspeito), color: '#f59e0b' },
     { label: 'Dado Defasado', active: Boolean(municipio.dado_defasado), color: '#64748b' },
@@ -599,6 +604,25 @@ function MunicipioSelecionado({ municipio }) {
           </div>
         </div>
         <div style={{ display: 'grid', justifyItems: 'end', gap: '6px' }}>
+          {onClear ? (
+            <button
+              type="button"
+              onClick={onClear}
+              style={{
+                border: '1px solid var(--border)',
+                background: 'var(--bg-card)',
+                color: 'var(--text-lo)',
+                borderRadius: '8px',
+                padding: '5px 8px',
+                cursor: 'pointer',
+                fontFamily: 'var(--sans)',
+                fontSize: '0.72rem',
+                fontWeight: 600,
+              }}
+            >
+              Resumo
+            </button>
+          ) : null}
           <BadgeRisco classe={municipio.classificacao} />
           <div
             style={{
@@ -648,17 +672,34 @@ function MunicipioSelecionado({ municipio }) {
       </div>
 
       <div style={{ display: 'grid', gap: '8px', marginTop: '14px' }}>
-        <DetailSectionTitle>{hasExactContributions ? 'Contribuicoes ao Score Final' : 'Leitura dos Indicadores do Score'}</DetailSectionTitle>
-        {contributionRows.map((item) => (
-          <ContributionBar
-            key={item.label}
-            label={item.label}
-            value={item.value}
-            max={item.max}
-            displayValue={item.displayValue}
-            exact={item.exact}
-          />
-        ))}
+        <DetailSectionTitle>Contribuicoes ao Score Final</DetailSectionTitle>
+        {hasContributions ? (
+          contributionRows.map((item) => (
+            <ContributionBar
+              key={item.label}
+              label={item.label}
+              value={item.value}
+              max={item.max}
+              displayValue={item.displayValue}
+              exact={item.exact}
+            />
+          ))
+        ) : (
+          <div
+            style={{
+              color: 'var(--text-lo)',
+              fontFamily: 'var(--sans)',
+              fontSize: '0.78rem',
+              lineHeight: 1.5,
+              background: 'var(--bg-card-alt)',
+              border: '1px solid var(--border-dim)',
+              borderRadius: '8px',
+              padding: '10px 12px',
+            }}
+          >
+            Contribuicoes indisponiveis para este municipio.
+          </div>
+        )}
       </div>
 
       <div style={{ display: 'grid', gap: '8px', marginTop: '16px' }}>
@@ -690,6 +731,141 @@ function MunicipioSelecionado({ municipio }) {
         </div>
       </div>
     </Painel>
+  )
+}
+
+function ResumoEstadoPainel({ municipios, distribuicao, medianas, alertas }) {
+  return (
+    <div style={{ display: 'grid', gap: '8px' }}>
+      <Painel>
+        <PainelTitulo>Resumo Estadual</PainelTitulo>
+        <div
+          style={{
+            color: 'var(--text-lo)',
+            fontFamily: 'var(--sans)',
+            fontSize: '0.82rem',
+            lineHeight: 1.6,
+            marginBottom: '6px',
+          }}
+        >
+          Selecione um municipio no mapa ou no ranking para abrir a leitura detalhada.
+        </div>
+      </Painel>
+
+      <Painel>
+        <PainelTitulo>Distribuicao por Faixa de Risco</PainelTitulo>
+        {ORDEM_RISCO.map((classe) => {
+          const total = municipios.length || 1
+          const quantidade = distribuicao[classe] || 0
+          const percentual = (quantidade / total) * 100
+          const cor = CORES_RISCO[classe]
+
+          return (
+            <div
+              key={classe}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '7px',
+                padding: '8px 0',
+                borderBottom: '1px solid var(--border-dim)',
+                fontSize: '0.8rem',
+              }}
+            >
+              <span style={{ color: cor, minWidth: '52px', fontFamily: 'var(--sans)', fontWeight: 600 }}>{LABEL_RISCO[classe]}</span>
+              <div
+                style={{
+                  flex: 1,
+                  background: 'var(--bg-card)',
+                  borderRadius: '999px',
+                  height: '6px',
+                }}
+              >
+                <div
+                  style={{
+                    width: `${percentual}%`,
+                    height: '6px',
+                    background: cor,
+                    borderRadius: '999px',
+                    transition: 'width 0.4s',
+                  }}
+                />
+              </div>
+              <span style={{ color: 'var(--text-mid)', minWidth: '26px', textAlign: 'right', fontFamily: 'var(--mono)', fontVariantNumeric: 'tabular-nums lining-nums' }}>
+                {quantidade}
+              </span>
+              <span style={{ color: 'var(--text-lo)', minWidth: '34px', textAlign: 'right', fontFamily: 'var(--mono)', fontVariantNumeric: 'tabular-nums lining-nums' }}>
+                {percentual.toFixed(0)}%
+              </span>
+            </div>
+          )
+        })}
+      </Painel>
+
+      <Painel>
+        <PainelTitulo>Indicadores - Mediana Estadual</PainelTitulo>
+        {Object.entries(medianas).map(([label, value]) => (
+          <div
+            key={label}
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              padding: '8px 0',
+              borderBottom: '1px solid var(--border-dim)',
+              fontSize: '0.82rem',
+              gap: '10px',
+            }}
+          >
+            <span style={{ color: 'var(--text-lo)', fontFamily: 'var(--sans)' }}>{label}</span>
+            <span style={{ color: 'var(--text-hi)', fontWeight: 600, fontFamily: 'var(--mono)', fontVariantNumeric: 'tabular-nums lining-nums' }}>{value}</span>
+          </div>
+        ))}
+      </Painel>
+
+      <Painel>
+        <PainelTitulo>Alertas por Tipo</PainelTitulo>
+        {[
+          { label: 'Dispensa > 30%', value: alertas.dispensa, cor: '#ef4444' },
+          { label: 'Dado suspeito', value: alertas.suspeito, cor: '#f59e0b' },
+          { label: 'Autonomia critica', value: alertas.autonomia, cor: '#f59e0b' },
+          { label: 'RP cronico (>=5 anos)', value: alertas.cronicos, cor: '#ef4444' },
+          { label: 'Dado defasado', value: alertas.defasado, cor: '#64748b' },
+        ].map((item) => (
+          <div
+            key={item.label}
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              padding: '8px 0',
+              borderBottom: '1px solid var(--border-dim)',
+              gap: '10px',
+            }}
+          >
+            <span
+              style={{
+                fontSize: '0.8rem',
+                color: 'var(--text-lo)',
+                fontFamily: 'var(--sans)',
+              }}
+            >
+              {item.label}
+            </span>
+            <span
+              style={{
+                fontSize: '0.82rem',
+                fontWeight: 700,
+                fontFamily: 'var(--mono)',
+                fontVariantNumeric: 'tabular-nums lining-nums',
+                color: item.value > 0 ? item.cor : 'var(--text-lo)',
+              }}
+            >
+              {item.value}
+            </span>
+          </div>
+        ))}
+      </Painel>
+    </div>
   )
 }
 
@@ -910,6 +1086,10 @@ export default function DashboardPage({ uf }) {
     [municipios],
   )
 
+  const todosRiscosAtivos = ORDEM_RISCO.every((classe) => filtroRisco.has(classe))
+  const scoreAlterado = scoreRange[0] !== 0 || scoreRange[1] !== 100
+  const temFiltrosAtivos = !todosRiscosAtivos || scoreAlterado || Boolean(buscaInput.trim())
+
   const toggleRisco = useCallback((classe) => {
     setFiltroRisco((anterior) => {
       const proximo = new Set(anterior)
@@ -917,6 +1097,17 @@ export default function DashboardPage({ uf }) {
       else proximo.add(classe)
       return proximo
     })
+  }, [])
+
+  const limparFiltros = useCallback(() => {
+    setFiltroRisco(new Set(ORDEM_RISCO))
+    setScoreRange([0, 100])
+    setBuscaInput('')
+    setBusca('')
+  }, [])
+
+  const filtrarTodosRiscos = useCallback(() => {
+    setFiltroRisco(new Set(ORDEM_RISCO))
   }, [])
 
   if (loading) {
@@ -1178,23 +1369,6 @@ export default function DashboardPage({ uf }) {
           borderTop: '1px solid var(--border)',
         }}
       >
-        {!isMobile ? (
-          <aside
-            style={{
-              width: '195px',
-              minWidth: '195px',
-              background: 'var(--bg-sidebar)',
-              borderRight: '1px solid var(--border)',
-              display: 'flex',
-              flexDirection: 'column',
-              padding: '16px 14px',
-              overflowY: 'auto',
-            }}
-          >
-            {sidebarConteudo}
-          </aside>
-        ) : null}
-
         <main
           style={{
             flex: 1,
@@ -1207,7 +1381,7 @@ export default function DashboardPage({ uf }) {
             minWidth: 0,
           }}
         >
-          <div style={{ display: 'flex', alignItems: isMobile ? 'flex-start' : 'center', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'stretch', gap: isMobile ? '10px' : '11px' }}>
             {isMobile ? (
               <button
                 onClick={() => setSidebarAberta(true)}
@@ -1220,37 +1394,192 @@ export default function DashboardPage({ uf }) {
                   padding: '8px 12px',
                   fontSize: '1rem',
                   flexShrink: 0,
+                  alignSelf: 'flex-start',
                 }}
               >
                 ≡
               </button>
             ) : null}
 
-            <div style={{ borderLeft: '3px solid var(--accent)', paddingLeft: isMobile ? '10px' : '11px', minWidth: 0 }}>
-              <h1
+            <div
+              style={{
+                width: '3px',
+                background: 'var(--accent)',
+                borderRadius: '2px',
+                flexShrink: 0,
+                alignSelf: 'flex-start',
+                height: isMobile ? '54px' : '82px',
+              }}
+            />
+
+            <div style={{ flex: 1, minWidth: 0, display: 'grid', gap: isMobile ? '0' : '10px' }}>
+              <div
                 style={{
-                  fontSize: isMobile ? '1.05rem' : '1.45rem',
-                  fontWeight: 700,
-                  color: 'var(--text-hi)',
-                  fontFamily: 'var(--sans)',
-                  margin: 0,
-                  lineHeight: 1.2,
+                  display: 'flex',
+                  alignItems: isMobile ? 'flex-start' : 'center',
+                  justifyContent: 'space-between',
+                  gap: '14px',
                 }}
               >
-                Capacidade de Pagamento - {getStateName(normalizedUf)}
-              </h1>
-              <p
+                <div style={{ minWidth: 0 }}>
+                  <h1
+                    style={{
+                      fontSize: isMobile ? '1.05rem' : '1.45rem',
+                      fontWeight: 700,
+                      color: 'var(--text-hi)',
+                      fontFamily: 'var(--sans)',
+                      margin: 0,
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    Capacidade de Pagamento dos Municipios {stateNameWithArticle(normalizedUf)}
+                  </h1>
+                  <p
+                    style={{
+                      fontSize: isMobile ? '0.78rem' : '0.84rem',
+                      color: 'var(--text-lo)',
+                      fontFamily: 'var(--sans)',
+                      marginTop: '4px',
+                      marginBottom: 0,
+                      lineHeight: 1.45,
+                    }}
+                  >
+                    Score de solvencia · {municipios.length} municipios · Referencia 2020-2026
+                  </p>
+                </div>
+
+                {!isMobile ? (
+                  <div style={{ width: 'min(360px, 34vw)', flexShrink: 0 }}>
+                    <input
+                      id="busca-municipio"
+                      type="text"
+                      placeholder="Buscar municipio..."
+                      value={buscaInput}
+                      onChange={(event) => setBuscaInput(event.target.value)}
+                      style={{
+                        width: '100%',
+                        minHeight: '38px',
+                        background: 'var(--bg-card)',
+                        border: '1px solid var(--border)',
+                        borderRadius: '8px',
+                        padding: '9px 12px',
+                        color: 'var(--text-hi)',
+                        fontSize: '0.9rem',
+                        fontFamily: 'var(--sans)',
+                        outline: 'none',
+                        boxSizing: 'border-box',
+                      }}
+                    />
+                  </div>
+                ) : null}
+              </div>
+
+              {!isMobile ? (
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: '8px 10px',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    borderBottom: '1px solid var(--border)',
+                    paddingBottom: '10px',
+                  }}
+                >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', minWidth: 0 }}>
+                <span
+                  style={{
+                    color: 'var(--text-lo)',
+                    fontFamily: 'var(--sans)',
+                    fontSize: '0.78rem',
+                    fontWeight: 600,
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {municipiosFiltrados.length} de {municipios.length}
+                  {buscaPendente ? <span style={{ color: 'var(--accent)' }}> · filtrando</span> : null}
+                </span>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                  <FilterChip
+                    label="Todos"
+                    count={municipios.length}
+                    color="var(--accent)"
+                    active={todosRiscosAtivos}
+                    onClick={filtrarTodosRiscos}
+                  />
+                  {ORDEM_RISCO.map((classe) => (
+                    <FilterChip
+                      key={classe}
+                      label={LABEL_RISCO[classe]}
+                      count={distribuicao[classe] || 0}
+                      color={CORES_RISCO[classe]}
+                      active={filtroRisco.has(classe)}
+                      onClick={() => toggleRisco(classe)}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div
                 style={{
-                  fontSize: isMobile ? '0.78rem' : '0.84rem',
-                  color: 'var(--text-lo)',
-                  fontFamily: 'var(--sans)',
-                  marginTop: '4px',
-                  marginBottom: 0,
-                  lineHeight: 1.45,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  minWidth: '260px',
+                  marginLeft: 'auto',
                 }}
               >
-                Score de solvencia · {municipios.length} municipios · Referencia 2020-2025
-              </p>
+                <span
+                  style={{
+                    color: 'var(--text-lo)',
+                    fontFamily: 'var(--sans)',
+                    fontSize: '0.76rem',
+                    fontWeight: 600,
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  Score {scoreRange[0]}-{scoreRange[1]}
+                </span>
+                <div style={{ display: 'grid', gap: '2px', flex: 1, minWidth: '120px' }}>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={scoreRange[0]}
+                    onChange={(event) => setScoreRange([Number(event.target.value), scoreRange[1]])}
+                    style={{ width: '100%', accentColor: 'var(--accent)' }}
+                  />
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={scoreRange[1]}
+                    onChange={(event) => setScoreRange([scoreRange[0], Number(event.target.value)])}
+                    style={{ width: '100%', accentColor: 'var(--accent)' }}
+                  />
+                </div>
+                {temFiltrosAtivos ? (
+                  <button
+                    type="button"
+                    onClick={limparFiltros}
+                    style={{
+                      border: '1px solid var(--border)',
+                      background: 'var(--bg-card)',
+                      color: 'var(--text-mid)',
+                      borderRadius: '8px',
+                      padding: '6px 10px',
+                      cursor: 'pointer',
+                      fontFamily: 'var(--sans)',
+                      fontSize: '0.78rem',
+                      fontWeight: 600,
+                    }}
+                  >
+                    Limpar
+                  </button>
+                ) : null}
+              </div>
+                </div>
+              ) : null}
             </div>
           </div>
 
@@ -1321,132 +1650,21 @@ export default function DashboardPage({ uf }) {
 
             <div
               style={{
-                width: isMobile ? '100%' : '270px',
-                minWidth: isMobile ? 'unset' : '270px',
+                width: isMobile ? '100%' : '360px',
+                minWidth: isMobile ? 'unset' : '360px',
                 display: 'flex',
                 flexDirection: 'column',
                 flexWrap: 'nowrap',
-                gap: '8px',
                 overflowY: isMobile ? 'visible' : 'auto',
               }}
             >
-              <Painel style={{ flex: isMobile ? '1 1 100%' : 'none' }}>
-                <PainelTitulo>Distribuicao por Faixa de Risco</PainelTitulo>
-                {ORDEM_RISCO.map((classe) => {
-                  const total = municipios.length || 1
-                  const quantidade = distribuicao[classe] || 0
-                  const percentual = (quantidade / total) * 100
-                  const cor = CORES_RISCO[classe]
-
-                  return (
-                    <div
-                      key={classe}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '7px',
-                        padding: '8px 0',
-                        borderBottom: '1px solid var(--border-dim)',
-                        fontSize: '0.8rem',
-                      }}
-                    >
-                      <span style={{ color: cor, minWidth: '52px', fontFamily: 'var(--sans)', fontWeight: 600 }}>{LABEL_RISCO[classe]}</span>
-                      <div
-                        style={{
-                          flex: 1,
-                          background: 'var(--bg-card)',
-                          borderRadius: '999px',
-                          height: '6px',
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: `${percentual}%`,
-                            height: '6px',
-                            background: cor,
-                            borderRadius: '999px',
-                            transition: 'width 0.4s',
-                          }}
-                        />
-                      </div>
-                      <span style={{ color: 'var(--text-mid)', minWidth: '26px', textAlign: 'right', fontFamily: 'var(--mono)', fontVariantNumeric: 'tabular-nums lining-nums' }}>
-                        {quantidade}
-                      </span>
-                      <span style={{ color: 'var(--text-lo)', minWidth: '34px', textAlign: 'right', fontFamily: 'var(--mono)', fontVariantNumeric: 'tabular-nums lining-nums' }}>
-                        {percentual.toFixed(0)}%
-                      </span>
-                    </div>
-                  )
-                })}
-              </Painel>
-
-              <Painel style={{ flex: isMobile ? '1 1 100%' : 'none' }}>
-                <PainelTitulo>Indicadores - Mediana Estadual</PainelTitulo>
-                {Object.entries(medianas).map(([label, value]) => (
-                  <div
-                    key={label}
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      padding: '8px 0',
-                      borderBottom: '1px solid var(--border-dim)',
-                      fontSize: '0.82rem',
-                      gap: '10px',
-                    }}
-                  >
-                    <span style={{ color: 'var(--text-lo)', fontFamily: 'var(--sans)' }}>{label}</span>
-                    <span style={{ color: 'var(--text-hi)', fontWeight: 600, fontFamily: 'var(--mono)', fontVariantNumeric: 'tabular-nums lining-nums' }}>{value}</span>
-                  </div>
-                ))}
-              </Painel>
-
-              <Painel style={{ flex: isMobile ? '1 1 100%' : 'none' }}>
-                <PainelTitulo>Alertas por Tipo</PainelTitulo>
-                {[
-                  { label: 'Dispensa > 30%', value: alertas.dispensa, cor: '#ef4444' },
-                  { label: 'Dado suspeito', value: alertas.suspeito, cor: '#f59e0b' },
-                  { label: 'Autonomia critica', value: alertas.autonomia, cor: '#f59e0b' },
-                  { label: 'RP cronico (>=5 anos)', value: alertas.cronicos, cor: '#ef4444' },
-                  { label: 'Dado defasado', value: alertas.defasado, cor: '#64748b' },
-                ].map((item) => (
-                  <div
-                    key={item.label}
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      padding: '8px 0',
-                      borderBottom: '1px solid var(--border-dim)',
-                      gap: '10px',
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: '0.8rem',
-                        color: 'var(--text-lo)',
-                        fontFamily: 'var(--sans)',
-                      }}
-                    >
-                      {item.label}
-                    </span>
-                    <span
-                      style={{
-                        fontSize: '0.82rem',
-                        fontWeight: 700,
-                        fontFamily: 'var(--mono)',
-                        fontVariantNumeric: 'tabular-nums lining-nums',
-                        color: item.value > 0 ? item.cor : 'var(--text-lo)',
-                      }}
-                    >
-                      {item.value}
-                    </span>
-                  </div>
-                ))}
-              </Painel>
+              {munSelecionado ? (
+                <MunicipioSelecionado municipio={munSelecionado} onClear={() => setMunSelecionado(null)} />
+              ) : (
+                <ResumoEstadoPainel municipios={municipios} distribuicao={distribuicao} medianas={medianas} alertas={alertas} />
+              )}
             </div>
           </div>
-
-          <MunicipioSelecionado municipio={munSelecionado} />
 
           <div
             style={{
