@@ -33,10 +33,10 @@ const CORES_RISCO = {
 }
 
 const LABEL_RISCO = {
-  baixo: 'BAIXO',
-  medio: 'MEDIO',
-  alto: 'ALTO',
-  critico: 'CRITICO',
+  baixo: 'Baixo',
+  medio: 'Médio',
+  alto: 'Alto',
+  critico: 'Crítico',
   sem_dados: 'S/D',
 }
 
@@ -479,17 +479,17 @@ function FilterChip({ label, count, color, active, onClick }) {
       style={{
         display: 'inline-flex',
         alignItems: 'center',
-        gap: '7px',
-        minHeight: '32px',
-        borderRadius: '8px',
-        border: `1px solid ${active ? `${color}55` : 'var(--border)'}`,
-        background: active ? `${color}14` : 'var(--bg-card)',
+        gap: '6px',
+        minHeight: '28px',
+        borderRadius: '999px',
+        border: `1px solid ${active ? `${color}55` : 'transparent'}`,
+        background: active ? `${color}12` : 'transparent',
         color: active ? 'var(--text-hi)' : 'var(--text-mid)',
         cursor: 'pointer',
-        padding: '7px 9px',
+        padding: '5px 8px',
         fontFamily: 'var(--sans)',
-        fontSize: '0.76rem',
-        fontWeight: active ? 700 : 600,
+        fontSize: '0.75rem',
+        fontWeight: active ? 700 : 500,
         lineHeight: 1,
         whiteSpace: 'nowrap',
       }}
@@ -1092,9 +1092,14 @@ export default function DashboardPage({ uf }) {
 
   const toggleRisco = useCallback((classe) => {
     setFiltroRisco((anterior) => {
+      const anteriorEraTodos = ORDEM_RISCO.every((item) => anterior.has(item))
+      if (anteriorEraTodos) return new Set([classe])
+
       const proximo = new Set(anterior)
       if (proximo.has(classe)) proximo.delete(classe)
       else proximo.add(classe)
+
+      if (proximo.size === 0) return new Set(ORDEM_RISCO)
       return proximo
     })
   }, [])
@@ -1486,20 +1491,24 @@ export default function DashboardPage({ uf }) {
                     paddingBottom: '10px',
                   }}
                 >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', minWidth: 0 }}>
                 <span
                   style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    minHeight: '28px',
                     color: 'var(--text-lo)',
                     fontFamily: 'var(--sans)',
-                    fontSize: '0.78rem',
+                    fontSize: '0.75rem',
                     fontWeight: 600,
+                    lineHeight: 1,
                     whiteSpace: 'nowrap',
                   }}
                 >
                   {municipiosFiltrados.length} de {municipios.length}
                   {buscaPendente ? <span style={{ color: 'var(--accent)' }}> · filtrando</span> : null}
                 </span>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '4px' }}>
                   <FilterChip
                     label="Todos"
                     count={municipios.length}
@@ -1513,7 +1522,7 @@ export default function DashboardPage({ uf }) {
                       label={LABEL_RISCO[classe]}
                       count={distribuicao[classe] || 0}
                       color={CORES_RISCO[classe]}
-                      active={filtroRisco.has(classe)}
+                      active={!todosRiscosAtivos && filtroRisco.has(classe)}
                       onClick={() => toggleRisco(classe)}
                     />
                   ))}

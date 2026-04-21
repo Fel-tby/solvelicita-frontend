@@ -285,20 +285,21 @@ export default function DocsPage() {
               <table className="doc-table">
                 <thead><tr><th>Termo</th><th>Definição</th></tr></thead>
                 <tbody>
-                  <tr><td>Lliq</td><td>Liquidez Líquida. DCL pós-RP excluindo RPPS, normalizada pela Receita Realizada</td></tr>
-                  <tr><td>DCL</td><td>Disponibilidade de Caixa Líquida após dedução de Restos a Pagar</td></tr>
-                  <tr><td>RP Processados</td><td>Despesas já liquidadas mas não pagas ao fornecedor</td></tr>
-                  <tr><td>RP Não Processados</td><td>Despesas empenhadas mas ainda não liquidadas</td></tr>
-                  <tr><td>RPPS</td><td>Regime Próprio de Previdência Social, caixa vinculado, excluído do Lliq</td></tr>
-                  <tr><td>Eorcam</td><td>Execução Orçamentária. Receita realizada / receita prevista, em %</td></tr>
-                  <tr><td>Ccauc</td><td>Score de pendência no CAUC. 0,0 = regular; 1,0 = pendência grave</td></tr>
-                  <tr><td>rproc_pct</td><td>RP processados liquidados a pagar como % da Receita Realizada</td></tr>
-                  <tr><td>n_anos_cronicos</td><td>Nº de anos em que rproc_pct &gt; 3%</td></tr>
-                  <tr><td>FPM</td><td>Fundo de Participação dos Municípios, principal transferência federal</td></tr>
-                  <tr><td>RGF</td><td>Relatório de Gestão Fiscal</td></tr>
-                  <tr><td>RREO</td><td>Relatório Resumido da Execução Orçamentária</td></tr>
-                  <tr><td>CAUC</td><td>Cadastro Único de Convênios</td></tr>
-                  <tr><td>AUC-ROC</td><td>Área sob a curva ROC, mede poder discriminativo do modelo</td></tr>
+                  <tr><td>Liquidez Líquida</td><td>Indicador de folga financeira do município. Mede a disponibilidade de caixa após Restos a Pagar, excluindo recursos vinculados ao RPPS, em relação à receita realizada.</td></tr>
+                  <tr><td>Disponibilidade de Caixa Líquida</td><td>Caixa disponível depois da dedução das obrigações financeiras já assumidas, especialmente Restos a Pagar. É uma das bases usadas no cálculo da Liquidez Líquida.</td></tr>
+                  <tr><td>RP Processados</td><td>Restos a Pagar referentes a despesas já liquidadas, mas ainda não pagas ao fornecedor. Indicam obrigações vencidas ou próximas do pagamento.</td></tr>
+                  <tr><td>RP Não Processados</td><td>Restos a Pagar referentes a despesas empenhadas, mas ainda não liquidadas. Representam compromissos assumidos que ainda não chegaram à etapa final de pagamento.</td></tr>
+                  <tr><td>RPPS</td><td>Regime Próprio de Previdência Social. No cálculo da Liquidez Líquida, o caixa vinculado ao RPPS é excluído por não estar livre para pagamento de contratos comuns da prefeitura.</td></tr>
+                  <tr><td>Execução Orçamentária</td><td>Relação entre a receita realizada e a receita prevista. Mostra o quanto o município arrecadou em comparação com o que havia planejado no orçamento.</td></tr>
+                  <tr><td>Regularidade CAUC</td><td>Indicador de pendências federais registradas no CAUC. Quanto mais graves as pendências, menor a contribuição desse componente para o score.</td></tr>
+                  <tr><td>RP Processados (%)</td><td>Percentual da receita realizada comprometido com Restos a Pagar processados, ou seja, despesas liquidadas e ainda não pagas.</td></tr>
+                  <tr><td>Anos Crônicos</td><td>Quantidade de anos em que o município terminou com RP Processados acima do limite considerado crítico pela metodologia.</td></tr>
+                  <tr><td>Dispensa</td><td>Contratação direta realizada sem licitação, permitida em situações previstas em lei. No dashboard, ajuda a medir a participação das dispensas no total contratado pelo município.</td></tr>
+                  <tr><td>FPM</td><td>Fundo de Participação dos Municípios. É uma transferência federal relevante para a receita municipal, especialmente em municípios com baixa arrecadação própria.</td></tr>
+                  <tr><td>RGF</td><td>Relatório de Gestão Fiscal. Fonte oficial usada para dados fiscais como disponibilidade de caixa e Restos a Pagar.</td></tr>
+                  <tr><td>RREO</td><td>Relatório Resumido da Execução Orçamentária. Fonte oficial usada para acompanhar receitas, despesas e entregas fiscais periódicas.</td></tr>
+                  <tr><td>CAUC</td><td>Cadastro Único de Convênios. Sistema federal que registra pendências que podem afetar o recebimento de recursos e transferências voluntárias.</td></tr>
+                  <tr><td>AUC-ROC</td><td>Métrica de validação que mede a capacidade do modelo de diferenciar municípios com maior e menor risco. Quanto mais distante de 0,5, maior o poder discriminativo.</td></tr>
                 </tbody>
               </table>
             </div>
