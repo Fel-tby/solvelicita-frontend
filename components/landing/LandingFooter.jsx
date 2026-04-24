@@ -1,0 +1,35 @@
+import Link from 'next/link'
+
+export default function LandingFooter() {
+  return (
+    <footer className="landing-footer">
+      <div className="footer-content">
+        <div className="footer-brand">
+          <div className="footer-logo" style={{ fontWeight: 700, fontSize: '1.25rem', color: '#185FA5' }}>
+            SolveLicita
+          </div>
+          <p>
+            Os dados são públicos. A forma que avaliamos, também.
+          </p>
+        </div>
+
+        <div className="footer-links">
+          <div className="footer-col">
+            <Link href="/docs">Docs</Link>
+            <Link href="/metodologia">Metodologia</Link>
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
+          </div>
+          <div className="footer-col">
+            <a href="mailto:contato@solvelicita.tech">contato@solvelicita.tech</a>
+            <Link href="/privacidade">Privacidade</Link>
+            <Link href="/termos">Termos</Link>
+          </div>
+        </div>
+      </div>
+      
+      <div className="footer-bottom">
+        SolveLicita • 2026 • Paraíba
+      </div>
+    </footer>
+  )
+}

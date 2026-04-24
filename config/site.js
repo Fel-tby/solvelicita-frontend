@@ -28,7 +28,7 @@ export const siteConfig = {
 }
 
 export function buildPageTitle(pageTitle) {
-  return pageTitle ? `${siteConfig.brandName} — ${pageTitle}` : siteConfig.brandName
+  return pageTitle ? `${siteConfig.brandName} | ${pageTitle}` : siteConfig.brandName
 }
 
 export function buildAbsoluteUrl(path = '/') {

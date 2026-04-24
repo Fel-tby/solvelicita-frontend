@@ -1,4 +1,5 @@
-﻿*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+@import url('./landing.css');
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
   --bg-page: #f3f4f6;
@@ -129,6 +130,7 @@ nav {
 /* ── SOBRE ── */
 .hero {
   max-width: 780px; margin: 0 auto; padding: 4.1rem 2rem 3rem;
+
 }
 @media (max-width: 720px) {
   .hero { padding: 2.5rem 1.5rem 2rem; }
@@ -144,10 +146,10 @@ nav {
 .hero-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 3rem; }
 .btn-primary {
   background: var(--accent); color: #fff; border: none; font-family: var(--sans);
-  font-size: 0.875rem; font-weight: 500; padding: 0.65rem 1.25rem;
-  border-radius: 8px; cursor: pointer; transition: opacity 0.12s;
+  font-size: 0.875rem; font-weight: 500; padding: 0.75rem 1.5rem;
+  border-radius: 8px; cursor: pointer; transition: background 0.12s;
 }
-.btn-primary:hover { opacity: 0.88; }
+.btn-primary:hover { background: var(--accent-hover); }
 .btn-secondary {
   background: none; color: var(--text-mid); border: 1px solid var(--border);
   font-family: var(--sans); font-size: 0.875rem; padding: 0.65rem 1.25rem;
@@ -912,5 +914,433 @@ nav {
 }
 .map-legend-dot.active { background: var(--accent); }
 .map-legend-dot.pending { background: #dde0e5; border: 1px solid #c5c9cf; }
+
+/* ── LANDING V2 ─────────────────────────────── */
+.capital-ticker-section {
+  padding: 0 0 1.5rem;
+}
+
+.capital-ticker-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.capital-ticker-track {
+  display: flex;
+  width: max-content;
+  animation: capital-marquee-right 72s linear infinite;
+}
+
+.capital-ticker-container:hover .capital-ticker-track {
+  animation-play-state: paused;
+}
+
+.capital-ticker-row {
+  display: flex;
+  gap: 0.4rem;
+  padding-right: 0.4rem;
+}
+
+.capital-card {
+  position: relative;
+  width: 130px;
+  height: 150px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #cad7ea;
+}
+
+.capital-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.capital-card-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0.75rem 0.85rem;
+  background: linear-gradient(180deg, rgba(13, 41, 88, 0) 30%, rgba(20, 55, 110, 0.6) 100%);
+}
+
+.capital-card-abbr {
+  color: #ffffff;
+  font-size: 1.15rem;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.capital-card-city {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.72rem;
+  font-weight: 500;
+  margin-top: 0.15rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.landing-coverage-summary {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 2rem 1.25rem;
+  text-align: center;
+}
+
+.landing-coverage-summary p {
+  margin-top: 0;
+  font-size: 1rem;
+  color: var(--text-mid);
+  line-height: 1.8;
+}
+
+.landing-coverage-summary strong {
+  color: var(--text);
+}
+
+.landing-map-section-v2 {
+  padding: 3rem 2rem;
+  background: #ffffff;
+  border-top: none;
+}
+
+.brazil-map-inner.wide {
+  max-width: 1140px;
+}
+
+.landing-map-shell {
+  position: relative;
+}
+
+.landing-map-copy {
+  max-width: 720px;
+  margin: 0 auto 2rem;
+  text-align: center;
+}
+
+.landing-map-kicker {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.landing-map-copy h2 {
+  margin-top: 0.5rem;
+  font-size: 1.15rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #4a5568;
+}
+
+.landing-map-copy p {
+  margin-top: 0.9rem;
+  color: var(--text-mid);
+  font-size: 0.98rem;
+  line-height: 1.8;
+}
+
+.landing-map-board {
+  position: relative;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.landing-map-panel {
+  position: relative;
+  width: 100%;
+}
+
+.landing-map-panel-glow {
+  display: none;
+}
+
+.brazil-map-svg.interactive {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  filter: drop-shadow(0 14px 44px rgba(16, 44, 88, 0.22));
+}
+
+.landing-state {
+  cursor: pointer;
+  transition:
+    fill 0.18s ease,
+    opacity 0.18s ease,
+    transform 0.18s ease,
+    filter 0.18s ease;
+  transform-origin: center;
+  stroke: rgba(255, 255, 255, 0.9);
+  stroke-width: 1.5;
+}
+
+.landing-state.is-available {
+  fill: #c6daf4;
+}
+
+.landing-state.is-processing {
+  fill: #d2dce6;
+}
+
+.landing-state.is-available:hover,
+.landing-state.is-available.is-selected {
+  fill: #2d6fba;
+  filter: drop-shadow(0 6px 12px rgba(24, 95, 165, 0.3));
+}
+
+.landing-state.is-processing:hover,
+.landing-state.is-processing.is-selected {
+  fill: #c5d0e0;
+}
+
+.landing-state:focus-visible {
+  outline: none;
+  fill: #2d6fba;
+}
+
+@keyframes popInCard {
+  0% {
+    opacity: 0;
+    transform: translateY(-40%) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+}
+
+.landing-state-card {
+  position: absolute;
+  width: 290px;
+  z-index: 10;
+  padding: 1.35rem;
+  border-radius: 24px;
+  border: 1px solid rgba(24, 95, 165, 0.08);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 24px 54px rgba(20, 47, 90, 0.16);
+  animation: popInCard 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.landing-state-card-pointer {
+  position: absolute;
+  left: -10px;
+  top: 48%;
+  width: 22px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.94);
+  border-left: 1px solid rgba(24, 95, 165, 0.08);
+  border-bottom: 1px solid rgba(24, 95, 165, 0.08);
+  transform: rotate(45deg);
+}
+
+.landing-state-card[data-align-left="true"] .landing-state-card-pointer {
+  left: auto;
+  right: -10px;
+  border-left: none;
+  border-bottom: none;
+  border-right: 1px solid rgba(24, 95, 165, 0.08);
+  border-top: 1px solid rgba(24, 95, 165, 0.08);
+}
+
+.landing-state-card-head {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.landing-state-card-title {
+  font-size: 1.45rem;
+  line-height: 1.1;
+  color: #102248;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.landing-state-card-status {
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.landing-state-card-uf {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.8rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(24, 95, 165, 0.08);
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.landing-state-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  margin-top: 1rem;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.landing-state-metric {
+  padding: 1rem 1rem 0.95rem;
+  background: rgba(247, 250, 254, 0.92);
+  border-right: 1px solid rgba(148, 163, 184, 0.14);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.landing-state-metric:nth-child(2n) {
+  border-right: none;
+}
+
+.landing-state-metric:nth-last-child(-n + 2) {
+  border-bottom: none;
+}
+
+.landing-state-metric strong {
+  display: block;
+  font-size: 1.7rem;
+  line-height: 1;
+  color: #102248;
+  letter-spacing: -0.05em;
+}
+
+.landing-state-metric span {
+  display: block;
+  margin-top: 0.42rem;
+  color: var(--text-mid);
+  font-size: 0.78rem;
+}
+
+.landing-state-metric.danger strong {
+  color: #d13d3d;
+}
+
+.landing-state-card-link {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 1rem;
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.landing-state-card-link.disabled {
+  color: var(--text-light);
+}
+
+.brazil-map-legend.refined {
+  margin-top: 1.5rem;
+}
+
+@keyframes capital-marquee-right {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+
+@media (max-width: 980px) {
+  .landing-map-board {
+    grid-template-columns: 1fr;
+  }
+
+  .landing-state-card {
+    margin-left: 0;
+    margin-top: -1.5rem;
+  }
+
+  .landing-state-card-pointer {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .capital-ticker-section {
+    padding: 0 0 1.25rem;
+  }
+
+  .capital-ticker-row {
+    gap: 0.22rem;
+    padding-right: 0.22rem;
+  }
+
+  .capital-card {
+    width: 104px;
+    height: 120px;
+    border-radius: 6px;
+  }
+
+  .capital-card-content {
+    padding: 0.5rem 0.6rem;
+  }
+
+  .capital-card-abbr {
+    font-size: 0.9rem;
+  }
+
+  .capital-card-city {
+    font-size: 0.58rem;
+    margin-top: 0.1rem;
+  }
+
+  .landing-coverage-summary {
+    padding: 2rem 1.2rem 1rem;
+  }
+
+  .landing-coverage-summary p {
+    font-size: 0.94rem;
+  }
+
+  .landing-map-section-v2 {
+    padding: 0.5rem 1rem 2.5rem;
+  }
+
+  .landing-map-copy p {
+    font-size: 0.9rem;
+  }
+
+  .landing-map-panel {
+    min-height: auto;
+    padding: 1.15rem 1rem 1.4rem;
+    border-radius: 24px;
+  }
+
+  .landing-state-card {
+    padding: 1.05rem;
+    border-radius: 20px;
+  }
+
+  .landing-state-card-title {
+    font-size: 1.2rem;
+  }
+
+  .landing-state-metric strong {
+    font-size: 1.35rem;
+  }
+
+  .brazil-map-legend.refined {
+    gap: 1rem;
+  }
+}
 
 
