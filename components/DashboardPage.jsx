@@ -1,4 +1,5 @@
 ﻿import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Map } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { fetchGeoJsonForUf, fetchMunicipiosByUf, getStateName, normalizeUf } from '../lib/municipios'
 
@@ -1117,20 +1118,12 @@ export default function DashboardPage({ uf }) {
 
   if (loading) {
     return (
-      <div
-        style={{
-          minHeight: 'calc(100vh - 56px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: 'var(--bg-page)',
-          color: 'var(--text-lo)',
-          fontFamily: 'var(--mono)',
-          fontSize: '0.75rem',
-          letterSpacing: '0.12em',
-        }}
-      >
-        CARREGANDO DADOS...
+      <div className="loading-state-container">
+        <div className="loading-pulse-icon">
+          <Map size={48} className="pulse" />
+        </div>
+        <h2 className="loading-text">Carregando dados do estado...</h2>
+        <p className="loading-subtext">Buscando indicadores fiscais e malha geográfica municipal.</p>
       </div>
     )
   }

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { ArrowRight } from 'lucide-react'
 import SeoHead from './SeoHead'
 import { navigationItems } from '../config/navigation'
 import {
@@ -127,65 +128,59 @@ export default function SiteLayout({
         ogType={ogType}
       />
 
-      <nav>
-        <Link className="nav-logo" href="/">
-          <svg
-            height="24"
-            viewBox="0 0 100 100"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-          >
-            <rect width="100" height="100" rx="18" fill="#185FA5" />
-            <path
-              d="M50,18 C74,12 82,32 66,42 C50,52 30,54 18,66 C8,78 22,92 50,90"
-              fill="none"
-              stroke="white"
-              strokeWidth="8.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M50,18 V90 H76"
-              fill="none"
-              stroke="white"
-              strokeWidth="8.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-          <svg
-            aria-label={siteConfig.brandName}
-            className="nav-wordmark"
-            viewBox="0 0 132 20"
-            xmlns="http://www.w3.org/2000/svg"
-            role="img"
-          >
-            <text
-              x="0"
-              y="15"
-              fontFamily="system-ui,-apple-system,'Helvetica Neue',sans-serif"
-              fontSize="15"
-              fontWeight="600"
-              letterSpacing="-0.5"
+      <nav className="site-nav">
+        <div className="nav-container">
+          <Link className="nav-logo" href="/">
+            <svg
+              height="28"
+              viewBox="0 0 100 100"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
             >
-              <tspan fill="#111827">Solve</tspan>
-              <tspan fill="#185FA5">Licita</tspan>
-            </text>
-          </svg>
-        </Link>
-        <div className="nav-links">
-          {navigationItems.map((item) => (
-            <Link
-              key={item.key}
-              className={`nav-link ${activeNav === item.key ? 'active' : ''}`}
-              href={item.href}
-              aria-current={activeNav === item.key ? 'page' : undefined}
-            >
-              {item.label}
+              <rect width="100" height="100" rx="22" fill="#185FA5" />
+              <path
+                d="M50,18 C74,12 82,32 66,42 C50,52 30,54 18,66 C8,78 22,92 50,90"
+                fill="none"
+                stroke="white"
+                strokeWidth="8.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M50,18 V90 H76"
+                fill="none"
+                stroke="white"
+                strokeWidth="8.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <div className="nav-brand-text">
+              <span className="brand-solve">Solve</span>
+              <span className="brand-licita">Licita</span>
+            </div>
+          </Link>
+
+          <div className="nav-links">
+            {navigationItems.map((item) => (
+              <Link
+                key={item.key}
+                className={`nav-link ${activeNav === item.key ? 'active' : ''}`}
+                href={item.href}
+                aria-current={activeNav === item.key ? 'page' : undefined}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+
+          <div className="nav-right">
+            <Link href="/dados" className="nav-cta-button">
+              <span>Painel</span>
+              <ArrowRight size={16} />
             </Link>
-          ))}
+          </div>
         </div>
-        <div className="nav-right" />
       </nav>
 
       {children}
