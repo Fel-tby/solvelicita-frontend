@@ -3,6 +3,7 @@ import DashboardPage from '../../components/DashboardPage'
 import SiteLayout from '../../components/SiteLayout'
 import { buildPageTitle } from '../../config/site'
 import { ESTADOS } from '../../lib/prototypeData'
+import { fetchGeoJsonForUf, fetchMunicipiosByUf } from '../../lib/municipios'
 
 const NOME_COMPLETO = {
   RN: 'Rio Grande do Norte',
@@ -45,15 +46,32 @@ export async function getStaticProps({ params }) {
     return { notFound: true }
   }
 
+  // Fetch data on the server for SSG/SEO
+  let initialMunicipios = []
+  let initialGeoData = null
+
+  try {
+    const [rows, geo] = await Promise.all([
+      fetchMunicipiosByUf(uf),
+      fetchGeoJsonForUf(uf),
+    ])
+    initialMunicipios = rows
+    initialGeoData = geo
+  } catch (error) {
+    console.error(`Error fetching data for ${uf} during SSG:`, error)
+  }
+
   return {
     props: {
       initialUf: uf,
+      initialMunicipios,
+      initialGeoData,
     },
-    revalidate: 86400, // Revalida a cada 24 horas (opcional)
+    revalidate: 86400,
   }
 }
 
-export default function EstadoPage({ initialUf }) {
+export default function EstadoPage({ initialUf, initialMunicipios, initialGeoData }) {
   const router = useRouter()
   // Usa o initialUf vindo do servidor, garantindo que o SSR/SSG tenha a UF preenchida,
   // ou usa do router como fallback.
@@ -84,7 +102,15 @@ export default function EstadoPage({ initialUf }) {
       activeNav="dados"
     >
       <section id="dados" className="section active">
-        {uf ? <DashboardPage uf={uf} /> : <div className="page-header"><p>Carregando estado…</p></div>}
+        {uf ? (
+          <DashboardPage 
+            uf={uf} 
+            initialMunicipios={initialMunicipios} 
+            initialGeoData={initialGeoData} 
+          />
+        ) : (
+          <div className="page-header"><p>Carregando estado…</p></div>
+        )}
       </section>
     </SiteLayout>
   )

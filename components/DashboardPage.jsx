@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Map } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { fetchGeoJsonForUf, fetchMunicipiosByUf, getStateName, normalizeUf } from '../lib/municipios'
@@ -870,11 +870,11 @@ function ResumoEstadoPainel({ municipios, distribuicao, medianas, alertas }) {
   )
 }
 
-export default function DashboardPage({ uf }) {
+export default function DashboardPage({ uf, initialMunicipios = [], initialGeoData = null }) {
   const normalizedUf = normalizeUf(uf)
-  const [municipios, setMunicipios] = useState([])
-  const [geoData, setGeoData] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [municipios, setMunicipios] = useState(initialMunicipios)
+  const [geoData, setGeoData] = useState(initialGeoData)
+  const [loading, setLoading] = useState(!initialMunicipios?.length)
   const [erro, setErro] = useState(null)
   const [filtroRisco, setFiltroRisco] = useState(new Set(ORDEM_RISCO))
   const [scoreRange, setScoreRange] = useState([0, 100])
@@ -901,6 +901,12 @@ export default function DashboardPage({ uf }) {
     let ativo = true
 
     async function carregar() {
+      // Se já temos os dados iniciais do servidor para esta UF, não precisamos de novo fetch imediato
+      if (initialMunicipios?.length && municipios?.length && normalizedUf === municipios[0]?.uf) {
+        setLoading(false)
+        return
+      }
+
       setLoading(true)
       setErro(null)
 
