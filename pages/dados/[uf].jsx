@@ -1,7 +1,6 @@
 import { useRouter } from 'next/router'
 import DashboardPage from '../../components/DashboardPage'
 import SiteLayout from '../../components/SiteLayout'
-import SiteFooter from '../../components/SiteFooter'
 import { buildPageTitle } from '../../config/site'
 import { ESTADOS } from '../../lib/prototypeData'
 
@@ -27,14 +26,43 @@ function getLocationPreposition(uf) {
   return 'no'
 }
 
-export default function EstadoPage() {
+export async function getStaticPaths() {
+  const paths = ESTADOS.filter((e) => e.ativo).map((estado) => ({
+    params: { uf: estado.uf.toLowerCase() },
+  }))
+
+  return {
+    paths,
+    fallback: 'blocking',
+  }
+}
+
+export async function getStaticProps({ params }) {
+  const uf = params.uf?.toUpperCase() || ''
+
+  const estado = ESTADOS.find((e) => e.uf === uf)
+  if (!estado) {
+    return { notFound: true }
+  }
+
+  return {
+    props: {
+      initialUf: uf,
+    },
+    revalidate: 86400, // Revalida a cada 24 horas (opcional)
+  }
+}
+
+export default function EstadoPage({ initialUf }) {
   const router = useRouter()
-  const uf = typeof router.query.uf === 'string' ? router.query.uf.toUpperCase() : ''
-  
+  // Usa o initialUf vindo do servidor, garantindo que o SSR/SSG tenha a UF preenchida,
+  // ou usa do router como fallback.
+  const uf = initialUf || (typeof router.query.uf === 'string' ? router.query.uf.toUpperCase() : '')
+
   let stateName = uf
   let preposition = 'do'
   let locPreposition = 'no'
-  
+
   if (uf) {
     const estado = ESTADOS.find((e) => e.uf === uf)
     if (estado) {
@@ -57,7 +85,6 @@ export default function EstadoPage() {
     >
       <section id="dados" className="section active">
         {uf ? <DashboardPage uf={uf} /> : <div className="page-header"><p>Carregando estado…</p></div>}
-        <SiteFooter />
       </section>
     </SiteLayout>
   )

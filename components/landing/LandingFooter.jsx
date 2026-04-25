@@ -6,7 +6,7 @@ export default function LandingFooter() {
     <footer className="landing-footer">
       <div className="footer-content">
         <div className="footer-brand">
-          <div className="footer-logo" style={{ fontWeight: 700, fontSize: '1.25rem', color: '#185FA5' }}>
+          <div className="footer-logo" style={{ fontWeight: 700, fontSize: '1.25rem', color: 'var(--text)' }}>
             SolveLicita
           </div>
           <p>
@@ -27,7 +27,7 @@ export default function LandingFooter() {
           </div>
         </div>
       </div>
-      
+
       <div className="footer-bottom">
         {buildFooterLabel()}
       </div>
