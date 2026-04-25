@@ -874,7 +874,14 @@ export default function DashboardPage({ uf, initialMunicipios = [] }) {
   const normalizedUf = normalizeUf(uf)
   const [municipios, setMunicipios] = useState(initialMunicipios)
   const [geoData, setGeoData] = useState(null)
-  const [loading, setLoading] = useState(!initialMunicipios?.length)
+    const [loading, setLoading] = useState(() => {
+    // No servidor, se temos dados iniciais, não mostramos loading (para o Google indexar)
+    if (typeof window === 'undefined') {
+      return !initialMunicipios || initialMunicipios.length === 0
+    }
+    // No cliente, começamos com loading para evitar o "pop" de conteúdo incompleto
+    return true
+  })
   const [erro, setErro] = useState(null)
   const [filtroRisco, setFiltroRisco] = useState(new Set(ORDEM_RISCO))
   const [scoreRange, setScoreRange] = useState([0, 100])
@@ -1129,7 +1136,10 @@ export default function DashboardPage({ uf, initialMunicipios = [] }) {
     setFiltroRisco(new Set(ORDEM_RISCO))
   }, [])
 
-  if (loading) {
+  // SEO: Se temos dados, não retornamos antecipadamente com o loading, 
+  // para que o Google sempre veja o conteúdo no HTML. 
+  // O loading será tratado como um overlay no final do render.
+  if (loading && (!municipios || municipios.length === 0)) {
     return (
       <div className="loading-state-container">
         <div className="loading-pulse-icon">
@@ -1332,6 +1342,15 @@ export default function DashboardPage({ uf, initialMunicipios = [] }) {
         />
       </div>
 
+      {loading && municipios.length > 0 && (
+        <div className="loading-state-overlay">
+          <div className="loading-pulse-icon">
+            <Map size={48} className="pulse" />
+          </div>
+          <h2 className="loading-text">Carregando mapa...</h2>
+          <p className="loading-subtext">Processando malha geográfica municipal.</p>
+        </div>
+      )}
     </>
   )
 
@@ -1890,6 +1909,15 @@ export default function DashboardPage({ uf, initialMunicipios = [] }) {
 
         </main>
       </div>
+      {loading && municipios.length > 0 && (
+        <div className="loading-state-overlay">
+          <div className="loading-pulse-icon">
+            <Map size={48} className="pulse" />
+          </div>
+          <h2 className="loading-text">Carregando mapa...</h2>
+          <p className="loading-subtext">Processando malha geográfica municipal.</p>
+        </div>
+      )}
     </>
   )
 }

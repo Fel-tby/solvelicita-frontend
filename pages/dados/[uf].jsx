@@ -94,6 +94,7 @@ export default function EstadoPage({ initialUf, initialMunicipios }) {
       title={buildPageTitle(pageTitle)}
       description={pageDesc}
       activeNav="dados"
+      robots="index,follow"
     >
       <section id="dados" className="section active">
         {uf ? (
@@ -102,7 +103,9 @@ export default function EstadoPage({ initialUf, initialMunicipios }) {
             initialMunicipios={initialMunicipios} 
           />
         ) : (
-          <div className="page-header"><p>Carregando estado…</p></div>
+          <div className="page-header" style={{ padding: '4rem', textAlign: 'center' }}>
+            <p style={{ color: 'var(--text-lo)' }}>Carregando dados do estado…</p>
+          </div>
         )}
       </section>
     </SiteLayout>
