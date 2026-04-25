@@ -1,14 +1,17 @@
 import { BRAZILIAN_CAPITALS } from '../lib/capitais'
 
+import Image from 'next/image'
+
 function CapitalCard({ city, abbr, image, focus }) {
   return (
     <article className="capital-card" aria-label={city}>
-      <img
+      <Image
         className="capital-card-image"
         src={encodeURI(image)}
         alt={city}
-        loading="lazy"
-        style={{ objectPosition: focus || 'center center' }}
+        fill
+        sizes="130px"
+        style={{ objectFit: 'cover', objectPosition: focus || 'center center' }}
       />
       <div className="capital-card-content">
         <span className="capital-card-abbr">{abbr}</span>

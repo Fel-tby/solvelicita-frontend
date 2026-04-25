@@ -133,15 +133,23 @@ export default function DadosPage() {
       activeNav="dados"
     >
       <section id="dados" className="section active">
-        {/* Hero */}
-        <div className="dados-hero">
-          <h1 className="dados-hero-title">Panorama Nacional</h1>
-          <p className="dados-hero-subtitle">
-            {loading
-              ? 'Carregando indicadores...'
-              : `${fmtInt(nacional.totalMunicipios)} municípios em ${nacional.estadosComDados} estados · Score de solvência · Referência 2020–2026`}
-          </p>
-        </div>
+        {loading ? (
+          <div className="loading-state-container">
+            <div className="loading-pulse-icon">
+              <Map size={48} className="pulse" />
+            </div>
+            <h2 className="loading-text">Carregando panorama nacional...</h2>
+            <p className="loading-subtext">Cruzando dados de liquidez e solvência dos municípios.</p>
+          </div>
+        ) : (
+          <>
+            {/* Hero */}
+            <div className="dados-hero">
+              <h1 className="dados-hero-title">Panorama Nacional</h1>
+              <p className="dados-hero-subtitle">
+                {`${fmtInt(nacional.totalMunicipios)} municípios em ${nacional.estadosComDados} estados · Score de solvência · Referência 2020–2026`}
+              </p>
+            </div>
 
         {/* KPIs */}
         {!loading && (
@@ -321,6 +329,8 @@ export default function DadosPage() {
           </div>
         )}
 
+          </>
+        )}
         <SiteFooter />
       </section>
     </SiteLayout>

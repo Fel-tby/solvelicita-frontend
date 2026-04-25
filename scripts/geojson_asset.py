@@ -346,6 +346,9 @@ def build_geojson_asset(
     if normalized.crs is not None and normalized.crs.to_epsg() != 4326:
         normalized = normalized.to_crs(4326)
 
+    # Simplify geometry to reduce file size (0.001 is ~110m tolerance)
+    normalized.geometry = normalized.geometry.simplify(0.001, preserve_topology=True)
+
     _validate_output(normalized, normalized_uf)
 
     output_path = output or (FRONTEND_PUBLIC / f"{normalized_uf.lower()}_geo.geojson")

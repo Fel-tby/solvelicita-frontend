@@ -1345,4 +1345,49 @@ nav {
   }
 }
 
+/* Loading States */
+.loading-state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  text-align: center;
+  padding: 2rem;
+}
+
+.loading-pulse-icon {
+  margin-bottom: 1.5rem;
+  color: var(--accent);
+  opacity: 0.8;
+}
+
+.loading-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+.loading-subtext {
+  color: var(--text-muted);
+  font-size: 1rem;
+}
+
+.pulse {
+  animation: loading-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes loading-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: .5;
+    transform: scale(0.95);
+  }
+}
+
 
