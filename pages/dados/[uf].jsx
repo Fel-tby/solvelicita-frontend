@@ -48,15 +48,10 @@ export async function getStaticProps({ params }) {
 
   // Fetch data on the server for SSG/SEO
   let initialMunicipios = []
-  let initialGeoData = null
 
   try {
-    const [rows, geo] = await Promise.all([
-      fetchMunicipiosByUf(uf),
-      fetchGeoJsonForUf(uf),
-    ])
+    const rows = await fetchMunicipiosByUf(uf)
     initialMunicipios = rows
-    initialGeoData = geo
   } catch (error) {
     console.error(`Error fetching data for ${uf} during SSG:`, error)
   }
@@ -65,13 +60,12 @@ export async function getStaticProps({ params }) {
     props: {
       initialUf: uf,
       initialMunicipios,
-      initialGeoData,
     },
     revalidate: 86400,
   }
 }
 
-export default function EstadoPage({ initialUf, initialMunicipios, initialGeoData }) {
+export default function EstadoPage({ initialUf, initialMunicipios }) {
   const router = useRouter()
   // Usa o initialUf vindo do servidor, garantindo que o SSR/SSG tenha a UF preenchida,
   // ou usa do router como fallback.
@@ -106,7 +100,6 @@ export default function EstadoPage({ initialUf, initialMunicipios, initialGeoDat
           <DashboardPage 
             uf={uf} 
             initialMunicipios={initialMunicipios} 
-            initialGeoData={initialGeoData} 
           />
         ) : (
           <div className="page-header"><p>Carregando estado…</p></div>

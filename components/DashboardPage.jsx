@@ -870,10 +870,10 @@ function ResumoEstadoPainel({ municipios, distribuicao, medianas, alertas }) {
   )
 }
 
-export default function DashboardPage({ uf, initialMunicipios = [], initialGeoData = null }) {
+export default function DashboardPage({ uf, initialMunicipios = [] }) {
   const normalizedUf = normalizeUf(uf)
   const [municipios, setMunicipios] = useState(initialMunicipios)
-  const [geoData, setGeoData] = useState(initialGeoData)
+  const [geoData, setGeoData] = useState(null)
   const [loading, setLoading] = useState(!initialMunicipios?.length)
   const [erro, setErro] = useState(null)
   const [filtroRisco, setFiltroRisco] = useState(new Set(ORDEM_RISCO))
@@ -901,20 +901,25 @@ export default function DashboardPage({ uf, initialMunicipios = [], initialGeoDa
     let ativo = true
 
     async function carregar() {
-      // Se já temos os dados iniciais do servidor para esta UF, não precisamos de novo fetch imediato
-      if (initialMunicipios?.length && municipios?.length && normalizedUf === municipios[0]?.uf) {
-        setLoading(false)
-        return
+      // Se já temos os municípios, não mostramos o loading (SEO/UX)
+      // Mas ainda precisamos buscar o GeoJSON no cliente
+      const temMunicipios = initialMunicipios?.length && municipios?.length && normalizedUf === municipios[0]?.uf
+      
+      if (!temMunicipios) {
+        setLoading(true)
       }
-
-      setLoading(true)
+      
       setErro(null)
 
       try {
-        const [rows, geo] = await Promise.all([
-          fetchMunicipiosByUf(normalizedUf),
-          fetchGeoJsonForUf(normalizedUf),
-        ])
+        const promises = [fetchMunicipiosByUf(normalizedUf)]
+        
+        // Sempre buscamos o GeoJSON no cliente para não pesar o payload do servidor
+        if (!geoData || normalizedUf !== geoData.uf_ref) {
+          promises.push(fetchGeoJsonForUf(normalizedUf))
+        }
+
+        const [rows, geo] = await Promise.all(promises)
 
         if (!ativo) return
 
@@ -924,7 +929,9 @@ export default function DashboardPage({ uf, initialMunicipios = [], initialGeoDa
         }))
 
         setMunicipios(enriquecidos)
-        setGeoData(geo)
+        if (geo) {
+          setGeoData({ ...geo, uf_ref: normalizedUf })
+        }
       } catch (error) {
         if (ativo) {
           setErro(error.message || 'Erro ao carregar dados.')
