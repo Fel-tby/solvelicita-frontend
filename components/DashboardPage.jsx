@@ -1151,7 +1151,7 @@ export default function DashboardPage({ uf, initialMunicipios = [] }) {
     )
   }
 
-  if (erro) {
+  if (erro && (!municipios || municipios.length === 0)) {
     return (
       <div
         style={{
