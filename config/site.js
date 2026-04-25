@@ -12,8 +12,8 @@ export const siteConfig = {
   license: 'AGPL-3.0',
   footerRegion: 'Paraíba',
   pilotRegion: 'Paraíba',
-  legalName: '',
-  cnpj: '',
+  legalName: 'SOLVELICITA INTELIGENCIA DE RISCO EM LICITACOES INOVA SIMPLES (I.S.)',
+  cnpj: '66.418.109/0001-51',
   paths: {
     home: '/',
     about: '/sobre',
@@ -28,7 +28,7 @@ export const siteConfig = {
 }
 
 export function buildPageTitle(pageTitle) {
-  return pageTitle ? `${siteConfig.brandName} | ${pageTitle}` : siteConfig.brandName
+  return pageTitle ? `${pageTitle} | ${siteConfig.brandName}` : siteConfig.brandName
 }
 
 export function buildAbsoluteUrl(path = '/') {
@@ -36,11 +36,12 @@ export function buildAbsoluteUrl(path = '/') {
 }
 
 export function buildFooterLabel(region = siteConfig.footerRegion) {
-  return `${siteConfig.brandName} · ${siteConfig.foundedYear} · ${region}`
+  const base = `${siteConfig.brandName} · ${siteConfig.foundedYear} · ${region}`
+  return siteConfig.cnpj ? `${base} · CNPJ ${siteConfig.cnpj}` : base
 }
 
 export function buildOrganizationJsonLd() {
-  return {
+  const json = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: siteConfig.brandName,
@@ -48,6 +49,9 @@ export function buildOrganizationJsonLd() {
     email: siteConfig.contactEmail,
     sameAs: [siteConfig.repoUrl],
   }
+  if (siteConfig.cnpj) json.taxID = siteConfig.cnpj
+  if (siteConfig.legalName) json.legalName = siteConfig.legalName
+  return json
 }
 
 export function buildBreadcrumbJsonLd(items) {

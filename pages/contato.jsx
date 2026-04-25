@@ -6,7 +6,7 @@ export default function ContatoPage() {
   return (
     <SiteLayout
       title={buildPageTitle('Contato')}
-      description="Entre em contato com o projeto."
+      description="Dúvidas sobre o score de prefeituras, parcerias ou sugestões? Entre em contato conosco e ajude a aprimorar o monitoramento da capacidade fiscal municipal."
       activeNav="contato"
     >
       <section id="contato" className="section active">

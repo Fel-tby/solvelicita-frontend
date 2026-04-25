@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { buildFooterLabel } from '../../config/site'
 
 export default function LandingFooter() {
   return (
@@ -28,7 +29,7 @@ export default function LandingFooter() {
       </div>
       
       <div className="footer-bottom">
-        SolveLicita • 2026 • Paraíba
+        {buildFooterLabel()}
       </div>
     </footer>
   )

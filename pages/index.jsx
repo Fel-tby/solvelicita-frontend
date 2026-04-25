@@ -7,7 +7,7 @@ export default function HomePage() {
   return (
     <SiteLayout
       title="SolveLicita, o score dos municípios brasileiros"
-      description="O primeiro score a analisar a capacidade fiscal dos municípios para fornecedores. Confira a saúde financeira e o risco de atraso de pagamentos das prefeituras em todo o Brasil."
+      description="Consulte a capacidade de pagamento e a saúde financeira das prefeituras brasileiras. O score oficial para fornecedores avaliarem risco de atraso e solvência."
       activeNav="sobre"
     >
       <section id="sobre" className="section active">

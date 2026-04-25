@@ -1,12 +1,12 @@
 import SiteFooter from '../components/SiteFooter'
 import SiteLayout from '../components/SiteLayout'
-import { buildPageTitle } from '../config/site'
+import { buildPageTitle, siteConfig } from '../config/site'
 
 export default function PrivacidadePage() {
   return (
     <SiteLayout
-      title={buildPageTitle('Privacidade')}
-      description="Informações sobre privacidade do produto."
+      title={buildPageTitle('Aviso de Privacidade e LGPD')}
+      description="Saiba como o SolveLicita protege sua privacidade e trata os dados de navegação. Nosso compromisso com a transparência e a LGPD."
       activeNav=""
     >
       <section className="section active">
@@ -28,12 +28,11 @@ export default function PrivacidadePage() {
 
             <section className="legal-section">
               <h2>1. Quem é o responsável pelo tratamento</h2>
-              <p><strong>Responsável pelo site:</strong> SolveLicita</p>
-              <p><strong>Contato para assuntos de privacidade:</strong> contato@solvelicita.tech</p>
+              <p><strong>Responsável pelo site:</strong> {siteConfig.legalName}</p>
+              <p><strong>CNPJ:</strong> {siteConfig.cnpj}</p>
+              <p><strong>Contato para assuntos de privacidade:</strong> {siteConfig.contactEmail}</p>
               <p>
-                Nota: enquanto o produto estiver em fase pré-operacional, este site é mantido
-                por seu fundador. Quando houver constituição formal da empresa e CNPJ,
-                este aviso será atualizado.
+                Nota: este site é mantido pela empresa SolveLicita.
               </p>
             </section>
 

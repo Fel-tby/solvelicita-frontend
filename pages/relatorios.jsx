@@ -5,8 +5,8 @@ import { buildPageTitle } from '../config/site'
 export default function RelatoriosPage() {
   return (
     <SiteLayout
-      title={buildPageTitle('Relatórios')}
-      description="Relatórios estaduais em preparação para publicação."
+      title={buildPageTitle('Relatórios Estaduais de Solvência')}
+      description="Análises aprofundadas sobre a saúde fiscal e o comportamento de pagamento das prefeituras brasileiras, separadas por estado."
       activeNav="relatorios"
     >
       <section id="relatorios" className="section active">

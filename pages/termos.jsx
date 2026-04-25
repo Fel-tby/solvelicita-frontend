@@ -1,12 +1,12 @@
 import SiteFooter from '../components/SiteFooter'
 import SiteLayout from '../components/SiteLayout'
-import { buildPageTitle } from '../config/site'
+import { buildPageTitle, siteConfig } from '../config/site'
 
 export default function TermosPage() {
   return (
     <SiteLayout
-      title={buildPageTitle('Termos')}
-      description="Informações sobre os termos de uso do produto."
+      title={buildPageTitle('Termos de Uso e Dados')}
+      description="Conheça as regras e limites no uso do score do SolveLicita. Informações para pesquisadores, jornalistas, fornecedores e gestores públicos."
       activeNav=""
     >
       <section className="section active">
@@ -16,7 +16,10 @@ export default function TermosPage() {
               <p className="legal-eyebrow">Aviso Legal</p>
               <h1>Termos de Uso</h1>
               <p className="legal-meta">Última atualização: 7 de abril de 2026</p>
-              <p className="legal-lead">
+              <div className="legal-meta" style={{ marginTop: '4px', fontSize: '0.85rem' }}>
+                {siteConfig.legalName} · CNPJ {siteConfig.cnpj}
+              </div>
+              <p className="legal-lead" style={{ marginTop: '16px' }}>
                 Ao acessar o site solvelicita.tech, você concorda com os termos descritos
                 abaixo. Se não concordar, por favor não utilize o site.
               </p>

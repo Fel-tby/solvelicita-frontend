@@ -25,8 +25,8 @@ export default function DocsPage() {
 
   return (
     <SiteLayout
-      title={buildPageTitle('Docs')}
-      description={`Metodologia, validação e referência do ${siteConfig.brandName}.`}
+      title={buildPageTitle('Metodologia e Validação')}
+      description="Conheça a fórmula, pesos e fontes de dados oficiais do SolveLicita. Transparência total sobre como calculamos o risco financeiro dos municípios."
       activeNav="docs"
     >
       <section id="docs" className="section active">
