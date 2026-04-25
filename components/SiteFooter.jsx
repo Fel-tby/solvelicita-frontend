@@ -17,7 +17,7 @@ export default function SiteFooter() {
         <div className="footer-links">
           <div className="footer-col">
             <Link href={siteConfig.paths.methodology}>Docs</Link>
-            <Link href={`${siteConfig.paths.methodology}#metodologia`}>Metodologia</Link>
+            <a href={siteConfig.methodologyUrl} target="_blank" rel="noopener noreferrer">Metodologia</a>
             <a href={siteConfig.repoUrl} target="_blank" rel="noopener noreferrer">GitHub</a>
           </div>
           <div className="footer-col">

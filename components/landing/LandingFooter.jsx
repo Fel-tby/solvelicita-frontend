@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { buildFooterLabel } from '../../config/site'
+import { buildFooterLabel, siteConfig } from '../../config/site'
 
 export default function LandingFooter() {
   return (
@@ -17,8 +17,8 @@ export default function LandingFooter() {
         <div className="footer-links">
           <div className="footer-col">
             <Link href="/docs">Docs</Link>
-            <Link href="/metodologia">Metodologia</Link>
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a href={siteConfig.methodologyUrl} target="_blank" rel="noopener noreferrer">Metodologia</a>
+            <a href={siteConfig.repoUrl} target="_blank" rel="noopener noreferrer">GitHub</a>
           </div>
           <div className="footer-col">
             <a href="mailto:contato@solvelicita.tech">contato@solvelicita.tech</a>
