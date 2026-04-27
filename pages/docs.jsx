@@ -75,7 +75,7 @@ export default function DocsPage() {
           <div className="docs-content">
             <div id="doc-visao" className={`doc-page ${docId === 'visao' ? 'active' : ''}`}>
               <div className="doc-h1">Metodologia do Score de Solvência</div>
-              <div className="doc-meta">Versão 7.0 · Março/2026 · <a href={siteConfig.repoUrl}>METODOLOGIA.md no GitHub</a></div>
+              <div className="doc-meta">Versão 7.0 · Abril/2026 · <a href={siteConfig.repoUrl}>METODOLOGIA.md no GitHub</a></div>
               <div className="doc-callout"><strong>Aviso:</strong> O score usa apenas bases oficiais do Tesouro Nacional e do Governo Federal. Quando houver divergência ou questionamento sobre um dado, a referência correta é sempre a base pública de origem.</div>
               <div className="doc-h2">Objetivo</div>
               <p className="doc-p">SolveLicita responde à pergunta: <strong>"Essa prefeitura tem capacidade fiscal de honrar seus contratos?"</strong></p>
@@ -187,36 +187,36 @@ export default function DocsPage() {
               <p className="doc-p">A validação compara o score calculado em um ano com o comportamento fiscal observado no ano seguinte. Esse desenho reproduz o uso real do modelo: ordenar risco futuro sem acesso a informações do período que ainda não aconteceu.</p>
               <div className="doc-callout"><strong>Nota metodológica:</strong> nesta validação, os componentes de bloqueio federal e autonomia tributária foram mantidos fixos por falta de série histórica comparável em toda a base. Por isso, o desempenho observado reflete principalmente o sinal de Liquidez Líquida, Execução Orçamentária, qualidade de entrega ao SICONFI e, no modelo operacional, também do histórico de atrasos recorrentes.</div>
               <div className="metric-row">
-                <div className="metric-card"><div className="metric-n">4.671</div><div className="metric-l">pares válidos com score pleno</div></div>
-                <div className="metric-card"><div className="metric-n">905</div><div className="metric-l">eventos crônicos na base principal</div></div>
-                <div className="metric-card"><div className="metric-n">1.431</div><div className="metric-l">municípios em 9 UFs do Nordeste</div></div>
+                <div className="metric-card"><div className="metric-n">17.168</div><div className="metric-l">pares válidos com score pleno</div></div>
+                <div className="metric-card"><div className="metric-n">1.663</div><div className="metric-l">eventos crônicos na base principal</div></div>
+                <div className="metric-card"><div className="metric-n">1.733</div><div className="metric-l">municípios em 9 UFs do Nordeste</div></div>
               </div>
               <div className="doc-h2">Modelo operacional</div>
               <table className="doc-table">
                 <thead><tr><th>Métrica</th><th>Valor</th></tr></thead>
                 <tbody>
-                  <tr><td>Pares válidos</td><td>4.671</td></tr>
-                  <tr><td>Eventos crônicos</td><td>905 (19,4%)</td></tr>
-                  <tr><td>Spearman</td><td>−0,3827</td></tr>
-                  <tr><td>AUC-ROC</td><td>0,7443</td></tr>
+                  <tr><td>Pares válidos</td><td>17.615</td></tr>
+                  <tr><td>Eventos crônicos</td><td>1.663 (9,7%)</td></tr>
+                  <tr><td>Spearman</td><td>−0,4119</td></tr>
+                  <tr><td>AUC-ROC</td><td>0,8153</td></tr>
                 </tbody>
               </table>
               <div className="doc-h2">Gradiente de risco</div>
               <table className="doc-table">
                 <thead><tr><th>Classe no ano-base</th><th>n</th><th>Mediana de atrasos no ano seguinte</th><th>% de casos crônicos no ano seguinte</th></tr></thead>
                 <tbody>
-                  <tr><td><span className="badge b-baixo">Risco Baixo</span></td><td>783</td><td>0,35%</td><td>9,2%</td></tr>
-                  <tr><td><span className="badge b-medio">Risco Médio</span></td><td>3.267</td><td>0,71%</td><td>15,6%</td></tr>
-                  <tr><td><span className="badge b-alto">Risco Alto</span></td><td>617</td><td>3,07%</td><td>51,9%</td></tr>
-                  <tr><td><span className="badge b-critico">Crítico</span></td><td>4</td><td>9,64%</td><td>50,0%</td></tr>
+                  <tr><td><span className="badge b-baixo">Risco Baixo</span></td><td>6.557</td><td>0,07%</td><td>2,4%</td></tr>
+                  <tr><td><span className="badge b-medio">Risco Médio</span></td><td>9.490</td><td>0,31%</td><td>10,1%</td></tr>
+                  <tr><td><span className="badge b-alto">Risco Alto</span></td><td>1.115</td><td>2,89%</td><td>48,4%</td></tr>
+                  <tr><td><span className="badge b-critico">Crítico</span></td><td>6</td><td>18,92%</td><td>66,7%</td></tr>
                 </tbody>
               </table>
               <div className="metric-row">
-                <div className="metric-card"><div className="metric-n" style={{ color: 'var(--accent)' }}>0,7443</div><div className="metric-l">AUC-ROC do modelo operacional</div></div>
-                <div className="metric-card"><div className="metric-n">−0,3827</div><div className="metric-l">Spearman entre score atual e atraso no ano seguinte</div></div>
-                <div className="metric-card"><div className="metric-n" style={{ color: 'var(--green)' }}>5,6×</div><div className="metric-l">Alto vs Baixo em cronicidade futura</div></div>
+                <div className="metric-card"><div className="metric-n" style={{ color: 'var(--accent)' }}>0,8153</div><div className="metric-l">AUC-ROC do modelo operacional</div></div>
+                <div className="metric-card"><div className="metric-n">−0,4119</div><div className="metric-l">Spearman entre score atual e atraso no ano seguinte</div></div>
+                <div className="metric-card"><div className="metric-n" style={{ color: 'var(--green)' }}>20,2×</div><div className="metric-l">Alto vs Baixo em cronicidade futura</div></div>
               </div>
-              <div className="doc-callout">O gradiente do modelo operacional é monotônico e sem inversões relevantes. Municípios classificados como <strong>Risco Alto têm 5,6× mais probabilidade</strong> de se tornarem crônicos no ano seguinte do que os de Risco Baixo.</div>
+              <div className="doc-callout">O gradiente do modelo operacional é monotônico e sem inversões relevantes. Municípios classificados como <strong>Risco Alto têm 20,2× mais probabilidade</strong> de se tornarem crônicos no ano seguinte do que os de Risco Baixo.</div>
             </div>
 
             <div id="doc-sens" className={`doc-page ${docId === 'sens' ? 'active' : ''}`}>
@@ -226,24 +226,24 @@ export default function DocsPage() {
               <table className="doc-table">
                 <thead><tr><th>Métrica</th><th>Valor</th></tr></thead>
                 <tbody>
-                  <tr><td>Pares válidos</td><td>4.671</td></tr>
-                  <tr><td>Eventos crônicos</td><td>905 (19,4%)</td></tr>
-                  <tr><td>Spearman</td><td>−0,2632</td></tr>
-                  <tr><td>AUC-ROC</td><td>0,6621</td></tr>
+                  <tr><td>Pares válidos</td><td>17.615</td></tr>
+                  <tr><td>Eventos crônicos</td><td>1.663 (9,7%)</td></tr>
+                  <tr><td>Spearman</td><td>−0,3510</td></tr>
+                  <tr><td>AUC-ROC</td><td>0,7516</td></tr>
                 </tbody>
               </table>
               <div className="doc-h2">Gradiente de risco no teste conservador</div>
               <table className="doc-table">
                 <thead><tr><th>Classe no ano-base</th><th>n</th><th>Mediana de atrasos no ano seguinte</th><th>% de casos crônicos no ano seguinte</th></tr></thead>
                 <tbody>
-                  <tr><td><span className="badge b-baixo">Risco Baixo</span></td><td>568</td><td>0,45%</td><td>13,2%</td></tr>
-                  <tr><td><span className="badge b-medio">Risco Médio</span></td><td>3.307</td><td>0,68%</td><td>16,4%</td></tr>
-                  <tr><td><span className="badge b-alto">Risco Alto</span></td><td>777</td><td>1,68%</td><td>35,8%</td></tr>
-                  <tr><td><span className="badge b-critico">Crítico</span></td><td>19</td><td>2,25%</td><td>42,1%</td></tr>
+                  <tr><td><span className="badge b-baixo">Risco Baixo</span></td><td>4.931</td><td>0,07%</td><td>3,3%</td></tr>
+                  <tr><td><span className="badge b-medio">Risco Médio</span></td><td>10.520</td><td>0,23%</td><td>9,5%</td></tr>
+                  <tr><td><span className="badge b-alto">Risco Alto</span></td><td>1.699</td><td>1,11%</td><td>29,0%</td></tr>
+                  <tr><td><span className="badge b-critico">Crítico</span></td><td>18</td><td>2,46%</td><td>38,9%</td></tr>
                 </tbody>
               </table>
-              <p className="doc-p">Sem esse componente, o modelo perde parte do poder discriminatório, mas continua acima do acaso. O AUC cai de 0,7443 para 0,6621 e o gradiente permanece visível: municípios classificados como Risco Alto ficam com probabilidade 2,7× maior de atraso crônico futuro do que os de Risco Baixo.</p>
-              <div className="doc-callout">A leitura conjunta é estável: o histórico de atrasos recorrentes carrega sinal importante, mas o modelo não depende exclusivamente dele para ordenar risco. Em leitura conservadora, o poder discriminatório do score fica entre <strong>0,6621 e 0,7443</strong>.</div>
+              <p className="doc-p">Sem esse componente, o modelo perde parte do poder discriminatório, mas continua acima do acaso. O AUC cai de 0,8153 para 0,7516 e o gradiente permanece visível: municípios classificados como Risco Alto ficam com probabilidade 8,8× maior de atraso crônico futuro do que os de Risco Baixo.</p>
+              <div className="doc-callout">A leitura conjunta é estável: o histórico de atrasos recorrentes carrega sinal importante, mas o modelo não depende exclusivamente dele para ordenar risco. Em leitura conservadora, o poder discriminatório do score fica entre <strong>0,7516 e 0,8153</strong>.</div>
             </div>
 
             <div id="doc-erros" className={`doc-page ${docId === 'erros' ? 'active' : ''}`}>
@@ -252,14 +252,14 @@ export default function DocsPage() {
               <table className="doc-table">
                 <thead><tr><th>Município</th><th>UF</th><th>Score no ano-base</th><th>Atraso no ano seguinte</th></tr></thead>
                 <tbody>
+                  <tr><td>Humaitá</td><td>AM</td><td>59.9</td><td>0,35%</td></tr>
+                  <tr><td>Faria Lemos</td><td>MG</td><td>59.9</td><td>0,86%</td></tr>
+                  <tr><td>Cachoeira Alta</td><td>GO</td><td>59.9</td><td>0,24%</td></tr>
                   <tr><td>Vertentes</td><td>PE</td><td>59.9</td><td>0,50%</td></tr>
-                  <tr><td>Cajazeiras</td><td>PB</td><td>59.9</td><td>0,26%</td></tr>
+                  <tr><td>Água Nova</td><td>RN</td><td>59.9</td><td>-0,34%</td></tr>
                   <tr><td>Ceará-Mirim</td><td>RN</td><td>59.9</td><td>0,58%</td></tr>
+                  <tr><td>Cajazeiras</td><td>PB</td><td>59.8</td><td>0,26%</td></tr>
                   <tr><td>Santana do Seridó</td><td>RN</td><td>59.8</td><td>0,76%</td></tr>
-                  <tr><td>Aracoiaba</td><td>CE</td><td>59.8</td><td>-1,98%</td></tr>
-                  <tr><td>Jatobá</td><td>PE</td><td>59.8</td><td>0,18%</td></tr>
-                  <tr><td>Santa Rita</td><td>PB</td><td>59.7</td><td>0,18%</td></tr>
-                  <tr><td>Serrinha</td><td>BA</td><td>59.7</td><td>0,29%</td></tr>
                 </tbody>
               </table>
               <p className="doc-p">Os falsos positivos seguem concentrados na fronteira da classe Alto, todos em torno de 60 pontos. Isso é compatível com erro de classificação próximo ao limiar, não com falha estrutural no núcleo do ranking.</p>
@@ -267,14 +267,14 @@ export default function DocsPage() {
               <table className="doc-table">
                 <thead><tr><th>Município</th><th>UF</th><th>Score no ano-base</th><th>Atraso no ano seguinte</th></tr></thead>
                 <tbody>
+                  <tr><td>Apiaí</td><td>SP</td><td>60.8</td><td>56,85%</td></tr>
+                  <tr><td>Inajá</td><td>PR</td><td>81.7</td><td>29,61%</td></tr>
+                  <tr><td>Guairaçá</td><td>PR</td><td>68.8</td><td>28,68%</td></tr>
+                  <tr><td>Fronteira dos Vales</td><td>MG</td><td>73.3</td><td>26,40%</td></tr>
+                  <tr><td>Carlópolis</td><td>PR</td><td>92.3</td><td>26,15%</td></tr>
+                  <tr><td>Mocajuba</td><td>PA</td><td>60.0</td><td>24,36%</td></tr>
+                  <tr><td>São Lourenço da Serra</td><td>SP</td><td>63.7</td><td>23,89%</td></tr>
                   <tr><td>Tupanatinga</td><td>PE</td><td>72.2</td><td>22,12%</td></tr>
-                  <tr><td>Santana do Cariri</td><td>CE</td><td>83.8</td><td>20,43%</td></tr>
-                  <tr><td>Iguatu</td><td>CE</td><td>68.1</td><td>20,36%</td></tr>
-                  <tr><td>Lucena</td><td>PB</td><td>65.4</td><td>20,02%</td></tr>
-                  <tr><td>Ibirajuba</td><td>PE</td><td>60.5</td><td>19,78%</td></tr>
-                  <tr><td>Barra do Mendes</td><td>BA</td><td>69.6</td><td>18,57%</td></tr>
-                  <tr><td>Manoel Vitorino</td><td>BA</td><td>75.3</td><td>18,47%</td></tr>
-                  <tr><td>Bom Conselho</td><td>PE</td><td>61.5</td><td>18,35%</td></tr>
                 </tbody>
               </table>
               <p className="doc-p">O padrão dominante nos falsos negativos graves continua sendo deterioração abrupta dos atrasos no ano seguinte, após um ano-base ainda relativamente saudável. Esse é o tipo de choque anual que o modelo consegue ordenar apenas parcialmente sem sinais infraanuais.</p>

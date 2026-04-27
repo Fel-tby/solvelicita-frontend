@@ -6,7 +6,7 @@ export default function ValidationSection() {
     <div className="landing-section">
       <h3 className="landing-section-title">Validação histórica</h3>
       <p className="landing-section-subtitle">
-        O score foi testado com dados históricos em 4.671 avaliações anuais de municípios entre 2021 e 2025, 
+        O score foi testado com dados históricos em 17.615 avaliações anuais de municípios entre 2021 e 2025, 
         <br />
         simulando cenários reais sem acesso a informações do futuro.
       </p>
@@ -15,7 +15,7 @@ export default function ValidationSection() {
         <div className="val-card">
           <TrendingUp className="val-icon" size={36} />
           <div className="val-content">
-            <strong>4.671</strong>
+            <strong>17.615</strong>
             <p>avaliações anuais<br />testadas</p>
           </div>
         </div>
@@ -23,7 +23,7 @@ export default function ValidationSection() {
         <div className="val-card">
           <AlertTriangle className="val-icon" size={36} />
           <div className="val-content">
-            <strong>51,9%</strong>
+            <strong>48,4%</strong>
             <p>atrasos crônicos<br />no grupo de Risco Alto</p>
           </div>
         </div>
@@ -31,14 +31,14 @@ export default function ValidationSection() {
         <div className="val-card">
           <ShieldCheck className="val-icon" size={36} />
           <div className="val-content">
-            <strong>9,2%</strong>
+            <strong>2,4%</strong>
             <p>atrasos crônicos<br />no grupo de Risco Baixo</p>
           </div>
         </div>
         <div className="val-card">
           <Target className="val-icon" size={36} />
           <div className="val-content">
-            <strong>74,4%</strong>
+            <strong>81,5%</strong>
             <p>acerto ao separar<br />bons e maus pagadores</p>
           </div>
         </div>

@@ -1,5 +1,6 @@
 @import url('./landing.css');
 @import url('./dados.css');
+@import url('./dashboard.css');
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
@@ -44,7 +45,7 @@
   --risk-nd: #64748b;
 }
 
-html { scroll-behavior: smooth; scroll-padding-top: 64px; }
+html { scroll-behavior: smooth; }
 body { font-family: var(--sans); font-size: 16px; line-height: 1.6; color: var(--text); background: var(--bg); }
 
 section#dados.section.active {
@@ -53,7 +54,7 @@ section#dados.section.active {
 
 /* NAV PREMIUM */
 .site-nav {
-  position: sticky;
+  position: relative;
   top: 0;
   left: 0;
   right: 0;
@@ -529,9 +530,9 @@ section#dados.section.active {
 .ach-card.neg .ach-body { color: #b03030; }
 
 /* ── DOCS ── */
-.docs-wrap { display: grid; grid-template-columns: 200px minmax(0, 1fr); max-width: 1000px; margin: 0 auto; min-height: calc(100vh - 56px); }
+.docs-wrap { display: grid; grid-template-columns: 200px minmax(0, 1fr); max-width: 1000px; margin: 0 auto; min-height: 100vh; }
 .docs-mobile-nav { display: none; }
-.docs-sidebar { padding: 2rem 1rem; border-right: 1px solid var(--border); position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto; }
+.docs-sidebar { padding: 2rem 1rem; border-right: 1px solid var(--border); position: sticky; top: 0; height: 100vh; overflow-y: auto; }
 .docs-nav-group { margin-top: 1.25rem; }
 .docs-nav-group:first-child { margin-top: 0; }
 .docs-nav-links { display: block; }
@@ -700,7 +701,7 @@ section#dados.section.active {
   .docs-mobile-nav {
     display: block;
     position: sticky;
-    top: 56px;
+    top: 0;
     z-index: 20;
     padding: 0.875rem 1rem;
     background: rgba(255,255,255,0.96);

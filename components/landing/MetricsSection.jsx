@@ -1,4 +1,4 @@
-import { Building2, Map, AlertTriangle, Users } from 'lucide-react'
+import { Building2, ShieldCheck, AlertTriangle, Users } from 'lucide-react'
 
 export default function MetricsSection() {
   return (
@@ -11,15 +11,15 @@ export default function MetricsSection() {
         </div>
         
         <div className="metric-card">
-          <Map className="metric-icon" size={32} />
-          <div className="metric-value">27</div>
-          <div className="metric-label">unidades federativas<br />cobertas</div>
+          <ShieldCheck className="metric-icon" size={32} />
+          <div className="metric-value">97,6%</div>
+          <div className="metric-label">Assertividade na classificação<br />de Risco Baixo</div>
         </div>
 
         <div className="metric-card">
           <AlertTriangle className="metric-icon" size={32} />
-          <div className="metric-value">5,6x</div>
-          <div className="metric-label">Risco de atraso em<br />municípios de Risco Alto</div>
+          <div className="metric-value">20,2x</div>
+          <div className="metric-label">Risco de atraso crônico de pagamentos em<br />municípios de Risco Alto</div>
         </div>
 
         <div className="metric-card">
