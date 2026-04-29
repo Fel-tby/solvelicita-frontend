@@ -1,57 +1,45 @@
-import { Users, Briefcase, Search, ShieldCheck } from 'lucide-react'
+import { ShieldCheck, BarChart2, TrendingUp } from 'lucide-react'
 
 export default function AboutSection() {
   return (
     <div className="landing-section">
-      <div className="about-split">
-        <div className="about-text">
-          <h3 className="landing-section-title">O que é o SolveLicita</h3>
-          <p>
-            O SolveLicita organiza dados fiscais e orçamentários para fornecer 
-            um score que estima a capacidade estrutural 
-            de pagamento dos municípios brasileiros.
+      <div className="about-modern-layout">
+        <div className="about-header">
+          <h3 className="about-title">O que é o SolveLicita</h3>
+          <p className="about-description">
+            Plataforma para o fornecedor que transforma dados públicos em 
+            inteligência sobre a capacidade de pagamento dos municípios brasileiros.
           </p>
-          <p>
-            A partir de bases oficiais do Tesouro Nacional e do Governo Federal, 
-            produzimos um score de solvência que ajuda a sociedade a tomar decisões 
-            informadas e a promover uma gestão pública mais transparente e eficiente.
+          <p className="about-description">
+            Com um score de risco explicável, ajudamos fornecedores, 
+            cidadãos e gestores a tomar decisões mais seguras e a promover 
+            uma gestão pública mais responsável e eficiente.
           </p>
         </div>
         
-        <div className="about-uses">
-          <h3 className="landing-section-title">Para que serve</h3>
-          <div className="uses-list">
-            <div className="use-item">
-              <Users className="use-icon" size={20} />
-              <div className="use-content">
-                <strong>Cidadãos</strong>
-                <p>Acompanhar a saúde fiscal do seu município.</p>
-              </div>
+        <div className="about-cards">
+          <div className="about-card">
+            <div className="about-card-icon">
+              <ShieldCheck size={40} strokeWidth={2} />
             </div>
-            
-            <div className="use-item">
-              <Briefcase className="use-icon" size={20} />
-              <div className="use-content">
-                <strong>Fornecedores</strong>
-                <p>Avaliar riscos antes de contratar com o setor público.</p>
-              </div>
+            <h4>Avalie risco antes de vender</h4>
+            <p>Reduza incertezas e proteja seu negócio identificando municípios com maior risco de inadimplência.</p>
+          </div>
+          
+          <div className="about-card">
+            <div className="about-card-icon">
+              <BarChart2 size={40} strokeWidth={2} />
             </div>
-            
-            <div className="use-item">
-              <Search className="use-icon" size={20} />
-              <div className="use-content">
-                <strong>Pesquisadores e jornalistas</strong>
-                <p>Analisar e comparar a situação fiscal entre municípios.</p>
-              </div>
+            <h4>Compare municípios</h4>
+            <p>Compare localidades com critérios objetivos e priorize oportunidades com mais segurança.</p>
+          </div>
+          
+          <div className="about-card">
+            <div className="about-card-icon">
+              <TrendingUp size={40} strokeWidth={2} />
             </div>
-            
-            <div className="use-item">
-              <ShieldCheck className="use-icon" size={20} />
-              <div className="use-content">
-                <strong>Gestores públicos</strong>
-                <p>Monitorar fragilidades e apoiar decisões baseadas em dados.</p>
-              </div>
-            </div>
+            <h4>Acompanhe a evolução do score</h4>
+            <p>Monitore mudanças ao longo do tempo e antecipe sinais de risco ou melhoria.</p>
           </div>
         </div>
       </div>

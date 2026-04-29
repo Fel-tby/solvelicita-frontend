@@ -131,30 +131,12 @@ export default function SiteLayout({
       <nav className="site-nav">
         <div className="nav-container">
           <Link className="nav-logo" href="/">
-            <svg
-              height="28"
-              viewBox="0 0 100 100"
-              xmlns="http://www.w3.org/2000/svg"
-              aria-hidden="true"
-            >
-              <rect width="100" height="100" rx="22" fill="#185FA5" />
-              <path
-                d="M50,18 C74,12 82,32 66,42 C50,52 30,54 18,66 C8,78 22,92 50,90"
-                fill="none"
-                stroke="white"
-                strokeWidth="8.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M50,18 V90 H76"
-                fill="none"
-                stroke="white"
-                strokeWidth="8.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <img 
+              src="/assets/solvelicita-icon-light.png" 
+              alt="SolveLicita Icon" 
+              height="32" 
+              style={{ objectFit: 'contain' }}
+            />
             <div className="nav-brand-text">
               <span className="brand-solve">Solve</span>
               <span className="brand-licita">Licita</span>
