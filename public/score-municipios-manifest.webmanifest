@@ -6,12 +6,14 @@
   "start_url": "/score-municipios-brasil/?utm_source=microsoft_store&utm_medium=pwa&utm_campaign=score_municipios_brasil",
   "scope": "/score-municipios-brasil/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui", "browser"],
   "orientation": "landscape-primary",
   "background_color": "#f8fafc",
   "theme_color": "#185FA5",
   "dir": "ltr",
   "lang": "pt-BR",
   "categories": ["business", "finance", "government", "productivity", "utilities"],
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/score-municipios-icon-192.png",
@@ -36,6 +38,43 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/score-screenshot-brasil.png",
+      "sizes": "1366x768",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Vis\u00e3o nacional com mapa, indicadores e ranking por estado"
+    },
+    {
+      "src": "/score-screenshot-estado.png",
+      "sizes": "1366x768",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Painel estadual com mapa municipal, filtros e alertas p\u00fablicos"
+    },
+    {
+      "src": "/score-screenshot-ranking.png",
+      "sizes": "1366x768",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Ranking municipal com scores, classifica\u00e7\u00f5es e indicadores"
+    },
+    {
+      "src": "/score-screenshot-estados-regiao.png",
+      "sizes": "1366x768",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Estados organizados por regi\u00e3o do Brasil"
+    },
+    {
+      "src": "/score-screenshot-ficha-municipio.png",
+      "sizes": "540x828",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Ficha de munic\u00edpio com indicadores e contribui\u00e7\u00f5es ao score"
     }
   ],
   "shortcuts": [
