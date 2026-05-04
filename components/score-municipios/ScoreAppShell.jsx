@@ -7,6 +7,14 @@ import styles from './ScoreMunicipios.module.css'
 
 const APP_NAME = 'Score Munic\u00edpios Brasil'
 const APP_DESCRIPTION = 'Painel gratuito da SolveLicita para consultar scores, mapas e indicadores p\u00fablicos dos munic\u00edpios brasileiros.'
+const SERVICE_WORKER_SCRIPT = `
+  (function () {
+    if (!('serviceWorker' in navigator)) return;
+    navigator.serviceWorker.register('/score-municipios-sw.js', {
+      scope: '/score-municipios-brasil/'
+    }).catch(function () {});
+  })();
+`
 
 export default function ScoreAppShell({
   title = APP_NAME,
@@ -24,7 +32,7 @@ export default function ScoreAppShell({
     navigator.serviceWorker.register('/score-municipios-sw.js', { scope: '/score-municipios-brasil/' }).catch(() => {})
   }, [])
 
-  const canonical = `https://solvelicita.tech${path}`
+  const canonical = `https://www.solvelicita.tech${path}`
   const fullTitle = title === APP_NAME ? APP_NAME : `${title} | ${APP_NAME}`
 
   return (
@@ -46,6 +54,7 @@ export default function ScoreAppShell({
         <meta property="og:type" content="website" />
         <meta property="og:url" content={canonical} />
         <meta property="og:locale" content="pt_BR" />
+        <script dangerouslySetInnerHTML={{ __html: SERVICE_WORKER_SCRIPT }} />
       </Head>
 
       <header className={styles.topbar}>
