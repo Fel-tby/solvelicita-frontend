@@ -1,0 +1,56 @@
+{
+  "id": "/score-municipios-brasil/",
+  "name": "Score Munic\u00edpios Brasil",
+  "short_name": "Score Munic\u00edpios",
+  "description": "Painel gratuito da SolveLicita para consultar scores, mapas e indicadores p\u00fablicos dos munic\u00edpios brasileiros.",
+  "start_url": "/score-municipios-brasil/?utm_source=microsoft_store&utm_medium=pwa&utm_campaign=score_municipios_brasil",
+  "scope": "/score-municipios-brasil/",
+  "display": "standalone",
+  "orientation": "landscape-primary",
+  "background_color": "#f8fafc",
+  "theme_color": "#185FA5",
+  "dir": "ltr",
+  "lang": "pt-BR",
+  "categories": ["business", "finance", "government", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "/score-municipios-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/score-municipios-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/score-municipios-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/score-municipios-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Estados",
+      "short_name": "Estados",
+      "description": "Ver todos os estados por regi\u00e3o do Brasil.",
+      "url": "/score-municipios-brasil/estados",
+      "icons": [
+        {
+          "src": "/score-municipios-icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
+}

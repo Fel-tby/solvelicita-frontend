@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Score Municípios Brasil">
+  <rect width="512" height="512" rx="92" fill="#185FA5"/>
+  <path
+    d="M256,92 C379,61 420,164 338,215 C256,266 154,276 92,338 C41,399 113,471 256,461"
+    fill="none"
+    stroke="white"
+    stroke-width="44"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M256,92 V461 H389"
+    fill="none"
+    stroke="white"
+    stroke-width="44"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>
