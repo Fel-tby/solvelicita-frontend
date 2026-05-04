@@ -1,7 +1,7 @@
 {
   "id": "/score-municipios-brasil/",
   "name": "Score Munic\u00edpios Brasil",
-  "short_name": "Score Munic\u00edpios",
+  "short_name": "Score Munic\u00edpios Brasil",
   "description": "Painel gratuito da SolveLicita para consultar scores, mapas e indicadores p\u00fablicos dos munic\u00edpios brasileiros.",
   "start_url": "/score-municipios-brasil/?utm_source=microsoft_store&utm_medium=pwa&utm_campaign=score_municipios_brasil",
   "scope": "/score-municipios-brasil/",
